@@ -22,13 +22,13 @@ public class BookHireCarActivity : Activity<BookHireCarConfig>
     public override async Task Execute()
     {
         // idempotently request a hire car from a hire car service.
-        HireCarService.Book(Config.HireCarRequestGuid).
+        await HireCarService.Book(Config.HireCarRequestGuid);
     }
 
     public override async Task Compensate()
     {
         // idempotently cancel a hire car request from a hire car service.
-        HireCarService.Cancel(Config.HireCarRequestGuid).
+        await HireCarService.Cancel(Config.HireCarRequestGuid);
     }
 }
 ```
