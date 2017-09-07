@@ -19,11 +19,11 @@ namespace Orleans.Sagas.Samples.Travel
 
         static async Task MainAsync(string[] args)
         {
-            var client = await CreateOrleansAndClient();
+            var GrainFactory = await CreateOrleansAndClient();
 
             var uniqueSagaKey = Guid.NewGuid();
 
-            var bookHolidaySaga = client.GetGrain<IBookHolidayGrain>(uniqueSagaKey);
+            var bookHolidaySaga = GrainFactory.GetGrain<IBookHolidayGrain>(uniqueSagaKey);
 
             await bookHolidaySaga.Execute(
                 null,
@@ -31,7 +31,26 @@ namespace Orleans.Sagas.Samples.Travel
                 null
             );
 
-            //await dukeSaga.Abort();
+            var saga = GrainFactory.CreateSaga();
+
+            saga.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
+            saga.AddActivity<BookHotelActivity>(new BookHotelConfig());
+            saga.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+
+            await saga.Execute();
+
+            //// returns a builder.
+            //var saga = GrainFactory.CreateSaga();
+
+            //// adding activities locally.
+            //saga.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
+            //saga.AddActivity<BookHotelActivity>(new BookHotelConfig());
+            //saga.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+
+            //// submits the activities to a saga grain and awaits a response the saga has been registered.
+            //await saga.Execute();
+
+            ////await dukeSaga.Abort();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()

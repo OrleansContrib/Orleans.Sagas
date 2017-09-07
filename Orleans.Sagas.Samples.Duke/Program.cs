@@ -19,18 +19,23 @@ namespace Orleans.Sagas.Samples.Duke
 
         static async Task MainAsync(string[] args)
         {
-            var client = await CreateOrleansAndClient();
+            var GrainFactory = await CreateOrleansAndClient();
 
-            var uniqueSagaKey = Guid.NewGuid();
+            //var uniqueSagaKey = Guid.NewGuid();
 
-            var dukeSaga = client.GetGrain<IDukeGrain>(uniqueSagaKey);
+            //var dukeSaga = GrainFactory.GetGrain<IDukeGrain>(uniqueSagaKey);
 
-            await dukeSaga.Execute(
-                new KickAssConfig { KickAssCount = 7 },
-                new ChewBubblegumConfig()
-            );
+            //await dukeSaga.Execute(
+            //    new KickAssConfig { KickAssCount = 7 },
+            //    new ChewBubblegumConfig()
+            //);
 
-            //await dukeSaga.Abort();
+            var saga = GrainFactory.CreateSaga();
+
+            saga.AddActivity<KickAssActivity>(new KickAssConfig { KickAssCount = 7 });
+            saga.AddActivity<ChewBubblegumActivity>();
+
+            await saga.Execute();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()
