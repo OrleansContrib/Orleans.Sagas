@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
-    public class SagaGrain : Grain<SagaState>, ISagaGrain
+    public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private List<IActivity> activities;
         private bool isResuming;

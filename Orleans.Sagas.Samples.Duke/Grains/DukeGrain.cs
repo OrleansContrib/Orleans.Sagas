@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Duke.Grains
 {
-    public class DukeGrain : SagaGrain, IDukeGrain
+    public class DukeGrain : Grain, IDukeGrain
     {
         public async Task Go()
         {

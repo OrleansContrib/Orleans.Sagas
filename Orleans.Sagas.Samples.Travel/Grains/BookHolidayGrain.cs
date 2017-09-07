@@ -4,7 +4,7 @@ using Orleans.Sagas.Samples.Travel.Interfaces;
 
 namespace Orleans.Sagas.Samples.Travel.Grains
 {
-    public class BookHolidayGrain : SagaGrain, IBookHolidayGrain
+    public class BookHolidayGrain : Grain, IBookHolidayGrain
     {
         public async Task Go()
         {
