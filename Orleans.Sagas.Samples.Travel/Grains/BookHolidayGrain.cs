@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Orleans.Sagas.Samples.Travel.Activities;
 using Orleans.Sagas.Samples.Travel.Interfaces;
 
@@ -7,13 +6,15 @@ namespace Orleans.Sagas.Samples.Travel.Grains
 {
     public class BookHolidayGrain : SagaGrain, IBookHolidayGrain
     {
-        protected override Task<List<IActivity>> DefineSaga()
+        public async Task Go()
         {
-            return Task.FromResult(new List<IActivity> {
-                new BookHireCarActivity(),
-                new BookHotelActivity(),
-                new BookPlaneActivity()
-            });
+            var saga = GrainFactory.CreateSaga();
+
+            saga.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
+            saga.AddActivity<BookHotelActivity>(new BookHotelConfig());
+            saga.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+
+            await saga.Execute();
         }
     }
 }

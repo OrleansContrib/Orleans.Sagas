@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Orleans.Sagas.Samples.Travel.Activities
 {
-    class BookHireCarConfig
+    public class BookHireCarConfig
     {
     }
 }

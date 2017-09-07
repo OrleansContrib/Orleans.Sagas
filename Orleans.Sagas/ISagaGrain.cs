@@ -8,8 +8,7 @@ namespace Orleans.Sagas
     {
         Task Abort();
         Task Execute(IEnumerable<Tuple<Type, object>> activities);
-        Task Execute(params object[] configs);
         Task<SagaStatus> GetStatus();
-        Task UpdateSaga();
+        Task Resume();
     }
 }

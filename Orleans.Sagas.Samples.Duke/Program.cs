@@ -1,5 +1,4 @@
 ﻿using Orleans.Runtime.Configuration;
-using Orleans.Sagas.Samples.Duke.Activities;
 using Orleans.Sagas.Samples.Duke.Interfaces;
 using System;
 using System.Linq;
@@ -19,23 +18,9 @@ namespace Orleans.Sagas.Samples.Duke
 
         static async Task MainAsync(string[] args)
         {
-            var GrainFactory = await CreateOrleansAndClient();
+            var client = await CreateOrleansAndClient();
 
-            //var uniqueSagaKey = Guid.NewGuid();
-
-            //var dukeSaga = GrainFactory.GetGrain<IDukeGrain>(uniqueSagaKey);
-
-            //await dukeSaga.Execute(
-            //    new KickAssConfig { KickAssCount = 7 },
-            //    new ChewBubblegumConfig()
-            //);
-
-            var saga = GrainFactory.CreateSaga();
-
-            saga.AddActivity<KickAssActivity>(new KickAssConfig { KickAssCount = 7 });
-            saga.AddActivity<ChewBubblegumActivity>();
-
-            await saga.Execute();
+            await client.GetGrain<IDukeGrain>(Guid.Empty).Go();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()

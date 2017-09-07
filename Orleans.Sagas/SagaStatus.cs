@@ -3,9 +3,9 @@
     public enum SagaStatus
     {
         NotStarted,
-        Aborting,
-        Aborted,
-        Completed,
-        Executing
+        Executing,
+        Executed,
+        Compensating,
+        Compensated
     }
 }

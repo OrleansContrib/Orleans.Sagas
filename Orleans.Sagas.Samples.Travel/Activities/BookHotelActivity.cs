@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Travel.Activities
 {
-    public class BookHotelActivity : Activity
+    public class BookHotelActivity : Activity<BookHotelConfig>
     {
         public override Task Compensate()
         {

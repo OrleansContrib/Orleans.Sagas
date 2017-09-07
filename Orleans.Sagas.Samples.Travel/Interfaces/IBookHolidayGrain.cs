@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Travel.Interfaces
 {
-    public interface IBookHolidayGrain : ISagaGrain
+    public interface IBookHolidayGrain : IGrainWithGuidKey
     {
+        Task Go();
     }
 }

@@ -1,9 +1,9 @@
-﻿using Orleans.Sagas.Samples.Duke.Activities;
-using System;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Duke.Interfaces
 {
-    public interface IDukeGrain : ISagaGrain, IGrainWithGuidKey
+    public interface IDukeGrain : IGrainWithGuidKey
     {
+        Task Go();
     }
 }
