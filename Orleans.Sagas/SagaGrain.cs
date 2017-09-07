@@ -7,49 +7,37 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
-    public abstract class SagaGrain : Grain<SagaState>, ISagaGrain
+    public class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private List<IActivity> activities;
-        private bool hasActivationResumed;
-        private IDisposable resumeTimer;
-        
-        public async Task Abort()
-        {
-            GetLogger().Warn(0, $"Aborting {GetType().Name} saga.");
-            State.Status = SagaStatus.Aborting;
-            await WriteStateAsync();
-        }
+        private bool isResuming;
+        private object resumeLock;
 
-        public async Task Execute(params object[] configs)
+        public override Task OnActivateAsync()
         {
-            if (State.Status == SagaStatus.NotStarted)
-            {
-                State.Configs = configs;
-                activities = (await DefineSaga()).ToList();
-                for (int i = 0; i < configs.Length; i++)
-                {
-                    var config = configs[i];
-                    var type = typeof(IActivity<>).MakeGenericType(config.GetType());
-                    var method = type.GetTypeInfo().GetMethod("SetConfig");
-                    method.Invoke(activities[i], new object[] { config });
-                }
-                await RegisterSaga();
-                State.Status = SagaStatus.Executing;
-                await WriteStateAsync();
-                resumeTimer = RegisterTimer(OnResumeTimer, null, TimeSpan.FromSeconds(1), TimeSpan.MaxValue);
-            }
-        }
-
-        private Task RegisterSaga()
-        {
-            // TODO: Register saga with a durable coordinator to ensure completion.
+            resumeLock = new object();
             return Task.CompletedTask;
         }
 
-        private async Task OnResumeTimer(object state)
+        public async Task Abort()
         {
-            var self = CreateReferenceToSelf();
-            await self.UpdateSaga();
+            GetLogger().Warn(0, $"Aborting {GetType().Name} saga.");
+            State.Status = SagaStatus.Compensating;
+            await WriteStateAsync();
+        }
+
+        public async Task Execute(IEnumerable<Tuple<Type, object>> activities)
+        {
+            if (State.Status == SagaStatus.NotStarted)
+            {
+                State.Activities = activities;
+                InstantiateActivities();
+                State.Status = SagaStatus.Executing;
+                await WriteStateAsync();
+                // TODO: Register reminder here.
+            }
+
+            await Resume();
         }
 
         public Task<SagaStatus> GetStatus()
@@ -57,57 +45,96 @@ namespace Orleans.Sagas
             return Task.FromResult(State.Status);
         }
 
-        public async Task UpdateSaga()
+        public Task Resume()
         {
-            if (resumeTimer != null)
-            { 
-                resumeTimer.Dispose();
-                resumeTimer = null;
+            lock (resumeLock)
+            {
+                if (isResuming)
+                {
+                    return Task.CompletedTask;
+                }
+
+                isResuming = true;
             }
 
-            if (hasActivationResumed)
+#pragma warning disable CS4014
+            ResumeNoWait();
+#pragma warning restore CS4014
+
+            lock (resumeLock)
+            {
+                isResuming = false;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public override string ToString()
+        {
+            return this.GetPrimaryKey().ToString();
+        }
+
+        private async Task ResumeNoWait()
+        {
+            InstantiateActivities();
+
+            while (State.Status == SagaStatus.Executing ||
+                   State.Status == SagaStatus.Compensating)
+            {
+                switch (State.Status)
+                {
+                    case SagaStatus.Executing:
+                        await ResumeExecuting();
+                        break;
+                    case SagaStatus.Compensating:
+                        await ResumeCompensating();
+                        break;
+                }
+            }
+
+            switch (State.Status)
+            {
+                case SagaStatus.NotStarted:
+                    ResumeNotStarted();
+                    break;
+                case SagaStatus.Executed:
+                case SagaStatus.Compensated:
+                    ResumeCompleted();
+                    break;
+            }
+        }
+
+        private void InstantiateActivities()
+        {
+            if (activities != null)
             {
                 return;
             }
 
-            hasActivationResumed = true;
-
-            await ResumeSaga();
-        }
-
-        protected abstract Task<List<IActivity>> DefineSaga();
-
-        private async Task ResumeSaga()
-        {
-            while (State.Status != SagaStatus.Completed &&
-                   State.Status != SagaStatus.Aborted &&
-                   State.Status != SagaStatus.NotStarted)
+            activities = new List<IActivity>();
+            foreach (var activityDefinition in State.Activities)
             {
-                if (State.Status == SagaStatus.Executing)
+                var type = activityDefinition.Item1;
+                var config = activityDefinition.Item2;
+                var activity = (IActivity)Activator.CreateInstance(type);
+                activities.Add(activity);
+                if (config != null)
                 {
-                    await HandleExecuting();
+                    var genericType = typeof(IActivity<>).MakeGenericType(config.GetType());
+                    var method = genericType.GetTypeInfo().GetMethod("SetConfig");
+                    method.Invoke(activity, new object[] { config });
                 }
-                else if (State.Status == SagaStatus.Aborting)
-                {
-                    await HandleCompensating();
-                }
-            }
-
-            var message = "Saga '" + GetType().Name + "' completed with status '" + State.Status + "'.";
-
-            if (State.Status == SagaStatus.Completed)
-            {
-                GetLogger().Info(message);
-            }
-            else
-            {
-                GetLogger().Warn(0, message);
             }
         }
 
-        private async Task HandleExecuting()
+        private void ResumeNotStarted()
         {
-            if (State.NumCompletedActivities < activities.Count)
+            GetLogger().Error(0, $"Saga {this} is attempting to resume but was never started.");
+        }
+
+        private async Task ResumeExecuting()
+        {
+            while (State.NumCompletedActivities < activities.Count)
             {
                 var currentActivity = activities[State.NumCompletedActivities];
 
@@ -124,37 +151,49 @@ namespace Orleans.Sagas
                 {
                     GetLogger().Error(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
-                    State.Status = SagaStatus.Aborting;
+                    State.Status = SagaStatus.Compensating;
                     await WriteStateAsync();
+                    return;
                 }
             }
-            else
-            {
-                State.Status = SagaStatus.Completed;
-                await WriteStateAsync();
-            }
+
+            State.Status = SagaStatus.Executed;
+            await WriteStateAsync();
         }
 
-        private async Task HandleCompensating()
+        private async Task ResumeCompensating()
         {
-            if (State.CompensationIndex >= 0)
+            while (State.CompensationIndex >= 0)
             {
-                var currentActivity = activities[State.CompensationIndex];
+                try
+                {
+                    var currentActivity = activities[State.CompensationIndex];
 
-                currentActivity.Initialize(GrainFactory, GetLogger());
-                GetLogger().Warn(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
-                await currentActivity.Compensate();
-                GetLogger().Warn(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
-                State.CompensationIndex--;
-                await WriteStateAsync();
+                    currentActivity.Initialize(GrainFactory, GetLogger());
+                    GetLogger().Warn(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
+                    await currentActivity.Compensate();
+                    GetLogger().Warn(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
+                    State.CompensationIndex--;
+                    await WriteStateAsync();
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(5000);
+                    // TODO: handle compensation failure with expoential backoff.
+                    // TODO: maybe eventual accept failure in a CompensationFailed state?
+                }
             }
-            else
-            {
-                State.Status = SagaStatus.Aborted;
-                await WriteStateAsync();
-            }
+
+            State.Status = SagaStatus.Compensated;
+            await WriteStateAsync();
         }
 
+        private void ResumeCompleted()
+        {
+            GetLogger().Info($"Saga {this} has completed with status '{State.Status}'.");
+        }
+
+        // TODO: Use for reminder resume. Currently un-used.
         private ISagaGrain CreateReferenceToSelf()
         {
             var types = new Type[] { typeof(Guid), typeof(string) };

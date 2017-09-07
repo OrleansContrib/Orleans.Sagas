@@ -21,17 +21,7 @@ namespace Orleans.Sagas.Samples.Travel
         {
             var client = await CreateOrleansAndClient();
 
-            var uniqueSagaKey = Guid.NewGuid();
-
-            var bookHolidaySaga = client.GetGrain<IBookHolidayGrain>(uniqueSagaKey);
-
-            await bookHolidaySaga.Execute(
-                null,
-                null,
-                null
-            );
-
-            //await dukeSaga.Abort();
+            await client.GetGrain<IBookHolidayGrain>(Guid.Empty).Go();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()
