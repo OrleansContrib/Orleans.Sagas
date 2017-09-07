@@ -5,10 +5,10 @@ namespace Orleans.Sagas.Samples.Travel.Activities
 {
     public class BookPlaneActivity : Activity<BookPlaneConfig>
     {
-        public override Task Execute()
+        public override async Task Execute()
         {
+            await Task.Delay(75 * 1000);
             //throw new SeatUnavailableException();
-            return Task.CompletedTask;
         }
 
         public override Task Compensate()

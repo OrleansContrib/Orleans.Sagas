@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
-    public interface ISagaGrain : IGrainWithGuidKey
+    public interface ISagaGrain : IGrainWithGuidKey, IRemindable
     {
         /// <summary>
         /// Registers an intent to abort the saga.

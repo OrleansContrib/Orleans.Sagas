@@ -9,6 +9,8 @@ namespace Orleans.Sagas
 {
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
+        private static string ReminderName = typeof(SagaGrain).Name;
+
         private List<IActivity> activities;
         private bool isResuming;
         private object resumeLock;
@@ -34,7 +36,7 @@ namespace Orleans.Sagas
                 InstantiateActivities();
                 State.Status = SagaStatus.Executing;
                 await WriteStateAsync();
-                // TODO: Register reminder here.
+                await RegisterReminder();
             }
 
             await Resume();
@@ -43,6 +45,11 @@ namespace Orleans.Sagas
         public Task<SagaStatus> GetStatus()
         {
             return Task.FromResult(State.Status);
+        }
+
+        public async Task ReceiveReminder(string reminderName, TickStatus status)
+        {
+            await Resume();
         }
 
         public Task Resume()
@@ -61,17 +68,18 @@ namespace Orleans.Sagas
             ResumeNoWait();
 #pragma warning restore CS4014
 
-            lock (resumeLock)
-            {
-                isResuming = false;
-            }
-
             return Task.CompletedTask;
         }
 
         public override string ToString()
         {
             return this.GetPrimaryKey().ToString();
+        }
+
+        private async Task<IGrainReminder> RegisterReminder()
+        {
+            var reminderTime = TimeSpan.FromMinutes(1);
+            return await RegisterOrUpdateReminder(ReminderName, reminderTime, reminderTime);
         }
 
         private async Task ResumeNoWait()
@@ -101,6 +109,14 @@ namespace Orleans.Sagas
                 case SagaStatus.Compensated:
                     ResumeCompleted();
                     break;
+            }
+
+            var reminder = await RegisterReminder();
+            await UnregisterReminder(reminder);
+
+            lock (resumeLock)
+            {
+                isResuming = false;
             }
         }
 
