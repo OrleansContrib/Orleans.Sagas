@@ -1,7 +1,6 @@
 ﻿using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -207,15 +206,6 @@ namespace Orleans.Sagas
         private void ResumeCompleted()
         {
             GetLogger().Info($"Saga {this} has completed with status '{State.Status}'.");
-        }
-
-        // TODO: Use for reminder resume. Currently un-used.
-        private ISagaGrain CreateReferenceToSelf()
-        {
-            var types = new Type[] { typeof(Guid), typeof(string) };
-            var method = typeof(IGrainFactory).GetTypeInfo().GetMethod("GetGrain", types);
-            var generic = method.MakeGenericMethod(new Type[] { GetType().GetInterfaces().Last() });
-            return (ISagaGrain)generic.Invoke(GrainFactory, new object[] { this.GetPrimaryKey(), null });
         }
     }
 }
