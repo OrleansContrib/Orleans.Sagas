@@ -11,6 +11,7 @@ This is a demonstration of a programming model for sagas in Orleans for discussi
 ```
 public class BookHireCarConfig
 {
+    public bool IsClownCar { get; set; }
     public Guid HireCarRequestGuid { get; set; }
 }
 ```
@@ -22,7 +23,7 @@ public class BookHireCarActivity : Activity<BookHireCarConfig>
     public override async Task Execute()
     {
         // idempotently request a hire car from a hire car service.
-        await HireCarService.Book(Config.HireCarRequestGuid);
+        await HireCarService.Book(Config.HireCarRequestGuid, Config.IsClownCar);
     }
 
     public override async Task Compensate()
