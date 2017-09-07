@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
-    public abstract class SagaGrain : Grain<SagaState>, ISagaGrain
+    public class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private List<IActivity> activities;
         private bool hasActivationResumed;
         private IDisposable resumeTimer;
-        
+
         public async Task Abort()
         {
             GetLogger().Warn(0, $"Aborting {GetType().Name} saga.");
@@ -60,7 +60,7 @@ namespace Orleans.Sagas
         public async Task UpdateSaga()
         {
             if (resumeTimer != null)
-            { 
+            {
                 resumeTimer.Dispose();
                 resumeTimer = null;
             }
@@ -75,7 +75,7 @@ namespace Orleans.Sagas
             await ResumeSaga();
         }
 
-        protected abstract Task<List<IActivity>> DefineSaga();
+        protected virtual Task<List<IActivity>> DefineSaga() { return null; }
 
         private async Task ResumeSaga()
         {
@@ -161,6 +161,12 @@ namespace Orleans.Sagas
             var method = typeof(IGrainFactory).GetTypeInfo().GetMethod("GetGrain", types);
             var generic = method.MakeGenericMethod(new Type[] { GetType().GetInterfaces().Last() });
             return (ISagaGrain)generic.Invoke(GrainFactory, new object[] { this.GetPrimaryKey(), null });
+        }
+
+        public async Task Execute(IEnumerable<Tuple<Type, object>> activities)
+        {
+            State.Activities = activities;
+            await WriteStateAsync();
         }
     }
 }
