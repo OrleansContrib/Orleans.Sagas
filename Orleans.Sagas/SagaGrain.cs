@@ -55,7 +55,7 @@ namespace Orleans.Sagas
 
         public async Task ReceiveReminder(string reminderName, TickStatus status)
         {
-            await Resume();
+            await GrainFactory.GetGrain<ISagaGrain>(this.GetPrimaryKey()).Resume();
         }
 
         public Task Resume()
