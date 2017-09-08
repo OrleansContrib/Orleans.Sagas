@@ -17,4 +17,10 @@
     <ProjectReference Include="..\Orleans.Sagas\Orleans.Sagas.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

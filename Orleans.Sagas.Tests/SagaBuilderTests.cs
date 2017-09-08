@@ -2,6 +2,8 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using System;
+using Orleans.Sagas.Exceptions;
+using System.Linq;
 
 namespace Orleans.Sagas.Tests
 {
@@ -18,6 +20,15 @@ namespace Orleans.Sagas.Tests
         }
 
         [Fact]
+        public void InstanceIdsAreUnique()
+        {
+            var ids = Enumerable.Range(0, 10)
+                .Select(x => new SagaBuilder(mockGrainFactory.Object).Id);
+
+            Assert.Equal(ids.Count(), ids.Distinct().Count());
+        }
+
+        [Fact]
         public void CanAddActivity()
         {
             subject.AddActivity<TestActivity>();
@@ -30,13 +41,58 @@ namespace Orleans.Sagas.Tests
         }
 
         [Fact]
+        public void ThrowsIfActivityIsAddedWithIncompatibleConfig()
+        {
+            Assert.Throws<IncompatibleActivityAndConfigException>(() =>
+                subject.AddActivity<TestConfigurableActivity>(string.Empty)
+            );
+        }
+
+        [Fact]
+        public void ThrowsIfActivityWithConfigIsAddedWithoutAConfig()
+        {
+            Assert.Throws<ConfigNotProvidedException>(() =>
+                subject.AddActivity<TestConfigurableActivity>()
+            );
+        }
+
+        [Fact]
+        public void ThrowsIfActivityWithConfigIsAddedWithANullConfig()
+        {
+            Assert.Throws<ConfigNotProvidedException>(() =>
+                subject.AddActivity<TestConfigurableActivity>(null)
+            );
+        }
+
+        [Fact]
+        public void ThrowsIfActivityWithoutConfigIsAddedWithAConfig()
+        {
+            Assert.Throws<ConfigNotRequiredException>(() =>
+                subject.AddActivity<TestActivity>(1)
+            );
+        }
+
+        [Fact]
         public async Task CanExecuteSaga()
         {
+            subject.AddActivity<TestActivity>();
             mockGrainFactory
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
 
             await subject.Execute();
+        }
+
+        [Fact]
+        public async Task ThrowsWhenExecutionAttemptedWithNoActivtiesInSaga()
+        {
+            mockGrainFactory
+                .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
+                .Returns(new Mock<ISagaGrain>().Object);
+
+            await Assert.ThrowsAsync<NoActivitiesInSagaException>(() =>
+                subject.Execute()
+            );
         }
 
         private class TestActivity : Activity
