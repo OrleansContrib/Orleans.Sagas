@@ -15,8 +15,23 @@ namespace Orleans.Sagas
         public async Task Abort()
         {
             GetLogger().Warn(0, $"Aborting {GetType().Name} saga.");
-            State.Status = SagaStatus.Compensating;
+
+            if (State.Status == SagaStatus.Aborted)
+            {
+                return;
+            }
+
+            State.HasBeenAborted = true;
+            State.Status = State.Status == SagaStatus.NotStarted
+                ? SagaStatus.Aborted
+                : SagaStatus.Compensating;
+
             await WriteStateAsync();
+
+            if (State.Status == SagaStatus.Compensating)
+            {
+                await Resume();
+            }
         }
 
         public async Task Execute(IEnumerable<Tuple<Type, object>> activities)
@@ -85,6 +100,7 @@ namespace Orleans.Sagas
                     break;
                 case SagaStatus.Executed:
                 case SagaStatus.Compensated:
+                case SagaStatus.Aborted:
                     ResumeCompleted();
                     break;
             }
@@ -95,7 +111,7 @@ namespace Orleans.Sagas
 
         private void InstantiateActivities()
         {
-            if (activities != null)
+            if (activities != null || State.HasBeenAborted)
             {
                 return;
             }
@@ -173,7 +189,9 @@ namespace Orleans.Sagas
                 }
             }
 
-            State.Status = SagaStatus.Compensated;
+            State.Status = State.HasBeenAborted
+                ? SagaStatus.Aborted
+                : SagaStatus.Compensated;
             await WriteStateAsync();
         }
 

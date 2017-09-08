@@ -21,7 +21,7 @@ namespace Orleans.Sagas.Samples.Travel
         {
             var client = await CreateOrleansAndClient();
 
-            await client.GetGrain<IBookHolidayGrain>(Guid.Empty).Go();
+            await client.GetGrain<IBookHolidayGrain>(Guid.Empty).Execute();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()

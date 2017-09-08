@@ -6,14 +6,52 @@ namespace Orleans.Sagas.Samples.Duke.Grains
 {
     public class DukeGrain : Grain, IDukeGrain
     {
-        public async Task Go()
+        public async Task Execute()
         {
-            var saga = GrainFactory.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
-            saga.AddActivity<KickAssActivity>(new KickAssConfig { KickAssCount = 7 });
-            saga.AddActivity<ChewBubblegumActivity>();
+            AddActivities(sagaBuilder);
 
-            await saga.Execute();
+            await sagaBuilder.Execute();
+        }
+
+        public async Task ExecuteAndAbort()
+        {
+            var sagaBuilder = GrainFactory.CreateSaga();
+
+            AddActivities(sagaBuilder);
+
+            var saga = await sagaBuilder.Execute();
+
+            await saga.Abort();
+        }
+
+        public async Task AbortWithoutExecution()
+        {
+            var sagaBuilder = GrainFactory.CreateSaga();
+
+            var saga = GrainFactory.GetSaga(sagaBuilder.Id);
+
+            await saga.Abort();
+        }
+
+        public async Task AbortThenExecute()
+        {
+            var sagaBuilder = GrainFactory.CreateSaga();
+
+            var saga = GrainFactory.GetSaga(sagaBuilder.Id);
+
+            await saga.Abort();
+
+            AddActivities(sagaBuilder);
+
+            await sagaBuilder.Execute();
+        }
+
+        private static void AddActivities(ISagaBuilder sagaBuilder)
+        {
+            sagaBuilder.AddActivity<KickAssActivity>(new KickAssConfig { KickAssCount = 7 });
+            sagaBuilder.AddActivity<ChewBubblegumActivity>();
         }
     }
 }

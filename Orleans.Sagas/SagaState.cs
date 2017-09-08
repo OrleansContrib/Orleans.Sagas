@@ -9,5 +9,6 @@ namespace Orleans.Sagas
         public int NumCompletedActivities { get; set; }
         public SagaStatus Status { get; set; }
         public int CompensationIndex { get; set; }
+        public bool HasBeenAborted { get; set; }
     }
 }

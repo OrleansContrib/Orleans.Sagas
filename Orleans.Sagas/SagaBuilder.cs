@@ -55,14 +55,18 @@ namespace Orleans
             activities.Add(new Tuple<Type, object>(typeof(TActivity), config));
         }
 
-        public async Task Execute()
+        public async Task<ISagaGrain> Execute()
         {
             if (activities.Count == 0)
             {
                 throw new NoActivitiesInSagaException();
             }
 
-            await grainFactory.GetGrain<ISagaGrain>(Id).Execute(activities);
+            var sagaGrain = grainFactory.GetGrain<ISagaGrain>(Id);
+
+            await sagaGrain.Execute(activities);
+
+            return sagaGrain;
         }
     }
 }

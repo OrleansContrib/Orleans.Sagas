@@ -6,15 +6,15 @@ namespace Orleans.Sagas.Samples.Travel.Grains
 {
     public class BookHolidayGrain : Grain, IBookHolidayGrain
     {
-        public async Task Go()
+        public async Task Execute()
         {
-            var saga = GrainFactory.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
-            saga.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
-            saga.AddActivity<BookHotelActivity>(new BookHotelConfig());
-            saga.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+            sagaBuilder.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
+            sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
+            sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
-            await saga.Execute();
+            await sagaBuilder.Execute();
         }
     }
 }
