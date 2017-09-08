@@ -40,13 +40,13 @@ public class BookHireCarActivity : Activity<BookHireCarConfig>
 ## Executing a saga
 ```
 // create a saga builder.
-var saga = GrainFactory.CreateSaga();
+var sagaBuilder = GrainFactory.CreateSaga();
 
 // add activities to your saga, and optional associated configuration.
-saga.AddActivity<BookHireCarActivity>(new BookHireCarConfig { HireCarRequestGuid = Guid.NewGuid(); });
-saga.AddActivity<BookHotelActivity>(new BookHotelConfig());
-saga.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+sagaBuilder.AddActivity<BookHireCarActivity>(new BookHireCarConfig { HireCarRequestGuid = Guid.NewGuid(); });
+sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
+sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
 // execute the saga (idempotent).
-await saga.Execute();
+await sagaBuilder.ExecuteSaga();
 ```
