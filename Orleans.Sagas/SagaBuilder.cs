@@ -47,7 +47,7 @@ namespace Orleans
             {
                 throw new ConfigNotProvidedException();
             }
-            else if (config != null && typeArgs[0] != config.GetType())
+            else if (config != null && !typeArgs[0].IsAssignableFrom(config.GetType()))
             {
                 throw new IncompatibleActivityAndConfigException();
             }
