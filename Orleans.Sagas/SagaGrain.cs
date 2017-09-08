@@ -11,14 +11,6 @@ namespace Orleans.Sagas
         private static string ReminderName = typeof(SagaGrain).Name;
 
         private List<IActivity> activities;
-        private bool isResuming;
-        private object resumeLock;
-
-        public override Task OnActivateAsync()
-        {
-            resumeLock = new object();
-            return Task.CompletedTask;
-        }
 
         public async Task Abort()
         {
@@ -53,18 +45,7 @@ namespace Orleans.Sagas
 
         public Task Resume()
         {
-            lock (resumeLock)
-            {
-                if (isResuming)
-                {
-                    return Task.CompletedTask;
-                }
-
-                isResuming = true;
-            }
-            
             ResumeNoWait().Ignore();
-
             return Task.CompletedTask;
         }
 
@@ -110,11 +91,6 @@ namespace Orleans.Sagas
 
             var reminder = await RegisterReminder();
             await UnregisterReminder(reminder);
-
-            lock (resumeLock)
-            {
-                isResuming = false;
-            }
         }
 
         private void InstantiateActivities()
