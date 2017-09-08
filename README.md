@@ -48,5 +48,8 @@ sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
 sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
 // execute the saga (idempotent).
-await sagaBuilder.ExecuteSaga();
+var saga = await sagaBuilder.ExecuteSaga();
+
+// abort the saga (idempotent).
+await saga.Abort();
 ```
