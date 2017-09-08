@@ -1,4 +1,7 @@
-﻿namespace Orleans
+﻿using Orleans.Sagas;
+using System;
+
+namespace Orleans
 {
     public static class IGrainFactorySagaExtensions
     {
@@ -10,6 +13,17 @@
         public static ISagaBuilder CreateSaga(this IGrainFactory that)
         {
             return new SagaBuilder(that);
+        }
+
+        /// <summary>
+        /// Returns a saga instance.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="id">The id of the saga, provider by the ISagaBuilder.</param>
+        /// <returns></returns>
+        public static ISagaGrain GetSaga(this IGrainFactory that, Guid id)
+        {
+            return that.GetGrain<ISagaGrain>(id);
         }
     }
 }

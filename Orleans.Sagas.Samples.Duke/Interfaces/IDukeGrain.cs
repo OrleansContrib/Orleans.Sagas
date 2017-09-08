@@ -2,8 +2,11 @@
 
 namespace Orleans.Sagas.Samples.Duke.Interfaces
 {
-    public interface IDukeGrain : IGrainWithGuidKey
+    public interface IDukeGrain : IGrainWithIntegerKey
     {
-        Task Go();
+        Task Execute();
+        Task ExecuteAndAbort();
+        Task AbortWithoutExecution();
+        Task AbortThenExecute();
     }
 }

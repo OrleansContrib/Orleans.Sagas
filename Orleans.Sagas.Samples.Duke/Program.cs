@@ -1,6 +1,5 @@
 ﻿using Orleans.Runtime.Configuration;
 using Orleans.Sagas.Samples.Duke.Interfaces;
-using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -20,7 +19,10 @@ namespace Orleans.Sagas.Samples.Duke
         {
             var client = await CreateOrleansAndClient();
 
-            await client.GetGrain<IDukeGrain>(Guid.Empty).Go();
+            await client.GetGrain<IDukeGrain>(0).Execute();
+            await client.GetGrain<IDukeGrain>(1).ExecuteAndAbort();
+            await client.GetGrain<IDukeGrain>(2).AbortWithoutExecution();
+            await client.GetGrain<IDukeGrain>(3).AbortThenExecute();
         }
 
         static async Task<IClusterClient> CreateOrleansAndClient()

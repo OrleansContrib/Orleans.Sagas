@@ -21,6 +21,10 @@
         /// <summary>
         /// This saga has completed compensating after a failure.
         /// </summary>
-        Compensated
+        Compensated,
+        /// <summary>
+        /// This saga has completed compensating after an abort.
+        /// </summary>
+        Aborted
     }
 }

@@ -7,6 +7,7 @@ namespace Orleans.Sagas.Samples.Travel.Activities
     {
         public override async Task Execute()
         {
+            // testing reminder interleaving by waiting for the first one.
             await Task.Delay(75 * 1000);
             //throw new SeatUnavailableException();
         }
