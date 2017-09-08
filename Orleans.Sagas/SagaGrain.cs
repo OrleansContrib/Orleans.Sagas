@@ -1,4 +1,5 @@
-﻿using Orleans.Runtime;
+﻿using Orleans.Concurrency;
+using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,6 +12,7 @@ namespace Orleans.Sagas
         private static string ReminderName = typeof(SagaGrain).Name;
 
         private List<IActivity> activities;
+        private bool isActive;
 
         public async Task Abort()
         {
@@ -55,12 +57,15 @@ namespace Orleans.Sagas
 
         public async Task ReceiveReminder(string reminderName, TickStatus status)
         {
-            await GrainFactory.GetGrain<ISagaGrain>(this.GetPrimaryKey()).Resume();
+            await Resume();
         }
 
         public Task Resume()
         {
-            ResumeNoWait().Ignore();
+            if (!isActive)
+            {
+                ResumeNoWait().Ignore();
+            }
             return Task.CompletedTask;
         }
 
@@ -77,6 +82,8 @@ namespace Orleans.Sagas
 
         private async Task ResumeNoWait()
         {
+            isActive = true;
+
             InstantiateActivities();
 
             while (State.Status == SagaStatus.Executing ||
@@ -107,6 +114,8 @@ namespace Orleans.Sagas
 
             var reminder = await RegisterReminder();
             await UnregisterReminder(reminder);
+
+            isActive = false;
         }
 
         private void InstantiateActivities()
