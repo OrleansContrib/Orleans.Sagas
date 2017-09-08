@@ -80,7 +80,7 @@ namespace Orleans.Sagas.Tests
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
 
-            await subject.Execute();
+            await subject.ExecuteSaga();
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Orleans.Sagas.Tests
                 .Returns(new Mock<ISagaGrain>().Object);
 
             await Assert.ThrowsAsync<NoActivitiesInSagaException>(() =>
-                subject.Execute()
+                subject.ExecuteSaga()
             );
         }
 

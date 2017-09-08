@@ -12,7 +12,7 @@ namespace Orleans.Sagas.Samples.Duke.Grains
 
             AddActivities(sagaBuilder);
 
-            await sagaBuilder.Execute();
+            await sagaBuilder.ExecuteSaga();
         }
 
         public async Task ExecuteAndAbort()
@@ -21,8 +21,8 @@ namespace Orleans.Sagas.Samples.Duke.Grains
 
             AddActivities(sagaBuilder);
 
-            var saga = await sagaBuilder.Execute();
-
+            var saga = await sagaBuilder.ExecuteSaga();
+            
             await saga.Abort();
         }
 
@@ -45,7 +45,7 @@ namespace Orleans.Sagas.Samples.Duke.Grains
 
             AddActivities(sagaBuilder);
 
-            await sagaBuilder.Execute();
+            await sagaBuilder.ExecuteSaga();
         }
 
         private static void AddActivities(ISagaBuilder sagaBuilder)

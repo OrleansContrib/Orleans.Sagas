@@ -26,6 +26,6 @@ namespace Orleans
         /// Executes this saga and returns once the saga has been registered. Idempotent.
         /// </summary>
         /// <returns>A reference to the saga.</returns>
-        Task<ISagaGrain> Execute();
+        Task<ISagaGrain> ExecuteSaga();
     }
 }

@@ -14,7 +14,7 @@ namespace Orleans.Sagas.Samples.Travel.Grains
             sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
             sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
-            await sagaBuilder.Execute();
+            await sagaBuilder.ExecuteSaga();
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Orleans
             activities.Add(new Tuple<Type, object>(typeof(TActivity), config));
         }
 
-        public async Task<ISagaGrain> Execute()
+        public async Task<ISagaGrain> ExecuteSaga()
         {
             if (activities.Count == 0)
             {
