@@ -62,10 +62,8 @@ namespace Orleans.Sagas
 
                 isResuming = true;
             }
-
-#pragma warning disable CS4014
-            ResumeNoWait();
-#pragma warning restore CS4014
+            
+            ResumeNoWait().Ignore();
 
             return Task.CompletedTask;
         }

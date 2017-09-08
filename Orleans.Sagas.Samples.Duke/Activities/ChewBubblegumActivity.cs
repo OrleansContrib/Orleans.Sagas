@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Duke.Activities
 {
-    public class ChewBubblegumActivity : Activity<ChewBubblegumConfig>
+    public class ChewBubblegumActivity : Activity
     {
         public override Task Execute()
         {
