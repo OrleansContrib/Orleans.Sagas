@@ -35,16 +35,17 @@ namespace Orleans.Sagas.Samples.Grains
 
         public async Task RevertBalanceModification(Guid transactionId)
         {
-            if (State.Transactions.ContainsKey(transactionId) &&
-                State.Transactions[transactionId] != 0)
+            if (State.Transactions.ContainsKey(transactionId))
             {
+                if (State.Transactions[transactionId] == 0)
+                {
+                    return;
+                }
+
                 State.Balance -= State.Transactions[transactionId];
-                State.Transactions[transactionId] = 0;
             }
-            else
-            {
-                State.Transactions[transactionId] = 0;
-            }
+
+            State.Transactions[transactionId] = 0;
 
             await WriteStateAsync();
         }
