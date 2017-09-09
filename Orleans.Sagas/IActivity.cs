@@ -1,4 +1,5 @@
 ﻿using Orleans.Runtime;
+using System;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas
@@ -6,7 +7,7 @@ namespace Orleans.Sagas
     public interface IActivity
     {
         string Name { get; }
-        void Initialize(IGrainFactory grainFactory, Logger logger);
+        void Initialize(Guid sagaId, IGrainFactory grainFactory, Logger logger);
         Task Execute();
         Task Compensate();
     }

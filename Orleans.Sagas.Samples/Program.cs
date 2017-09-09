@@ -1,4 +1,5 @@
-﻿using Orleans.Sagas.Samples.Interfaces;
+﻿using Orleans.Runtime;
+using Orleans.Sagas.Samples.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,14 +18,42 @@ namespace Orleans.Sagas.Samples
         {
             var client = await OrleansHost.CreateOrleansSiloAndClient();
 
+            await BankTransferSample(client);
             await DukeSample(client);
             await TravelSample(client);
             await ConcurrencySample(client);
         }
 
+        static async Task BankTransferSample(IClusterClient client)
+        {
+            await client.GetGrain<IBankAccountGrain>(1).ModifyBalance(Guid.Empty, 75);
+            await client.GetGrain<IBankAccountGrain>(2).ModifyBalance(Guid.Empty, 75);
+
+            await TransferAndWait(client, 1, 2, 25);
+            await TransferAndWait(client, 2, 1, 20);
+            // comment in to blow account ceiling and test compensation.
+            //await TransferAndWait(client, 1, 2, 60);
+        }
+
+        private static async Task TransferAndWait(IClusterClient client, int from, int to, int amount)
+        {
+            var logger = client.Logger;
+
+            await WaitForSaga(
+                await client.GetGrain<ITransferGrain>(0).RequestTransfer(from, to, amount)
+            );
+
+            logger.Info("Account balances:");
+            for (int accountId = 1; accountId <= 2; accountId++)
+            {
+                var account = client.GetGrain<IBankAccountGrain>(accountId);
+                logger.Info($"  #{accountId} : {await account.GetBalance()}");
+            }
+        }
+
         static async Task DukeSample(IClusterClient client)
         {
-            await WaitForSagasToComplete(new List<ISagaGrain>
+            await WaitForSagas(new List<ISagaGrain>
             {
                 await client.GetGrain<IDukeGrain>(0).Execute(),
                 await client.GetGrain<IDukeGrain>(1).ExecuteAndAbort(),
@@ -35,10 +64,9 @@ namespace Orleans.Sagas.Samples
 
         static async Task TravelSample(IClusterClient client)
         {
-            await WaitForSagasToComplete(new List<ISagaGrain>
-            {
+            await WaitForSaga(
                 await client.GetGrain<IBookHolidayGrain>(Guid.Empty).Execute()
-            });
+            );
         }
 
         static async Task ConcurrencySample(IClusterClient client)
@@ -49,10 +77,15 @@ namespace Orleans.Sagas.Samples
                 sagas.Add(await client.GetGrain<IDukeGrain>(i).Execute());
             }
 
-            await WaitForSagasToComplete(sagas);
+            await WaitForSagas(sagas);
         }
 
-        static async Task WaitForSagasToComplete(List<ISagaGrain> sagas)
+        static async Task WaitForSaga(ISagaGrain saga)
+        {
+            await WaitForSagas(new List<ISagaGrain> { saga });
+        }
+
+        static async Task WaitForSagas(List<ISagaGrain> sagas)
         {
             while (sagas.Count > 0)
             {

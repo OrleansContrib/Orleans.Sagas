@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Orleans.Runtime;
+using System;
 
 namespace Orleans.Sagas
 {
@@ -17,14 +18,17 @@ namespace Orleans.Sagas
     {
         public virtual string Name => this.GetType().Name;
 
-        public void Initialize(IGrainFactory grainFactory, Logger logger)
+        public void Initialize(Guid sagaId, IGrainFactory grainFactory, Logger logger)
         {
+            SagaId = sagaId;
             GrainFactory = grainFactory;
             Logger = logger;
         }
 
         public abstract Task Execute();
         public abstract Task Compensate();
+
+        protected Guid SagaId { get; private set; }
         protected IGrainFactory GrainFactory { get; private set; }
         protected Logger Logger { get; private set; }
     }

@@ -174,7 +174,7 @@ namespace Orleans.Sagas
 
                 try
                 {
-                    currentActivity.Initialize(GrainFactory, GetLogger());
+                    currentActivity.Initialize(this.GetPrimaryKey(), GrainFactory, GetLogger());
                     GetLogger().Verbose($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
                     await currentActivity.Execute();
                     GetLogger().Verbose($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
@@ -203,7 +203,7 @@ namespace Orleans.Sagas
                 {
                     var currentActivity = activities[State.CompensationIndex];
 
-                    currentActivity.Initialize(GrainFactory, GetLogger());
+                    currentActivity.Initialize(this.GetPrimaryKey(), GrainFactory, GetLogger());
                     GetLogger().Verbose(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate();
                     GetLogger().Verbose(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
