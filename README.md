@@ -51,5 +51,5 @@ sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 var saga = await sagaBuilder.ExecuteSaga();
 
 // abort the saga (idempotent).
-await saga.Abort();
+await saga.RequestAbort();
 ```
