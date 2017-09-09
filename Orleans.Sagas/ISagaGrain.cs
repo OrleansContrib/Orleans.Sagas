@@ -24,6 +24,12 @@ namespace Orleans.Sagas
         /// <returns>The status of this saga.</returns>
         Task<SagaStatus> GetStatus();
         /// <summary>
+        /// Exposes whether this saga has completed (either executed successfully, aborted successfully,
+        /// or fully compensated due to failure.
+        /// </summary>
+        /// <returns>Returns whether this saga has completed.</returns>
+        Task<bool> HasCompleted();
+        /// <summary>
         /// Resumes the saga. In normal operation this should be automatically called by the
         /// reminder scheduler.
         /// </summary>

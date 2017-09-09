@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Orleans.Sagas.Samples.Travel.Activities;
-using Orleans.Sagas.Samples.Travel.Interfaces;
+using Orleans.Sagas.Samples.Activities;
+using Orleans.Sagas.Samples.Interfaces;
 
-namespace Orleans.Sagas.Samples.Travel.Grains
+namespace Orleans.Sagas.Samples.Grains
 {
     public class BookHolidayGrain : Grain, IBookHolidayGrain
     {
-        public async Task Execute()
+        public async Task<ISagaGrain> Execute()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
@@ -14,7 +14,7 @@ namespace Orleans.Sagas.Samples.Travel.Grains
             sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
             sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
-            await sagaBuilder.ExecuteSaga();
+            return await sagaBuilder.ExecuteSaga();
         }
     }
 }

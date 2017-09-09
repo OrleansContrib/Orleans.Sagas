@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Travel.Interfaces
+namespace Orleans.Sagas.Samples.Interfaces
 {
     public interface IBookHolidayGrain : IGrainWithGuidKey
     {
-        Task Execute();
+        Task<ISagaGrain> Execute();
     }
 }

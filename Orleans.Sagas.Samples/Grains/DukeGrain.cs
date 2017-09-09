@@ -1,21 +1,21 @@
-﻿using Orleans.Sagas.Samples.Duke.Activities;
-using Orleans.Sagas.Samples.Duke.Interfaces;
+﻿using Orleans.Sagas.Samples.Activities;
+using Orleans.Sagas.Samples.Interfaces;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Duke.Grains
+namespace Orleans.Sagas.Samples.Grains
 {
     public class DukeGrain : Grain, IDukeGrain
     {
-        public async Task Execute()
+        public async Task<ISagaGrain> Execute()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
             AddActivities(sagaBuilder);
 
-            await sagaBuilder.ExecuteSaga();
+            return await sagaBuilder.ExecuteSaga();
         }
 
-        public async Task ExecuteAndAbort()
+        public async Task<ISagaGrain> ExecuteAndAbort()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
@@ -24,18 +24,22 @@ namespace Orleans.Sagas.Samples.Duke.Grains
             var saga = await sagaBuilder.ExecuteSaga();
             
             await saga.Abort();
+
+            return saga;
         }
 
-        public async Task AbortWithoutExecution()
+        public async Task<ISagaGrain> AbortWithoutExecution()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
             var saga = GrainFactory.GetSaga(sagaBuilder.Id);
 
             await saga.Abort();
+
+            return saga;
         }
 
-        public async Task AbortThenExecute()
+        public async Task<ISagaGrain> AbortThenExecute()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
@@ -46,6 +50,8 @@ namespace Orleans.Sagas.Samples.Duke.Grains
             AddActivities(sagaBuilder);
 
             await sagaBuilder.ExecuteSaga();
+
+            return saga;
         }
 
         private static void AddActivities(ISagaBuilder sagaBuilder)

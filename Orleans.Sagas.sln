@@ -5,11 +5,9 @@ VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.Sagas", "Orleans.Sagas\Orleans.Sagas.csproj", "{34D47F4A-EEE7-46CB-9DBB-A1383345CF89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.Sagas.Samples.Duke", "Orleans.Sagas.Samples.Duke\Orleans.Sagas.Samples.Duke.csproj", "{88900FD3-C397-46CD-90A0-2BDBB733B817}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.Sagas.Tests", "Orleans.Sagas.Tests\Orleans.Sagas.Tests.csproj", "{24BBEBDF-4690-42E0-8751-39FFD43812CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orleans.Sagas.Samples.Travel", "Orleans.Sagas.Samples.Travel\Orleans.Sagas.Samples.Travel.csproj", "{F6801B69-4587-45C3-8AAD-C10BAE506A53}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orleans.Sagas.Tests", "Orleans.Sagas.Tests\Orleans.Sagas.Tests.csproj", "{24BBEBDF-4690-42E0-8751-39FFD43812CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orleans.Sagas.Samples", "Orleans.Sagas.Samples\Orleans.Sagas.Samples.csproj", "{DB1FBC18-730D-4B8E-BF3B-1E70A8A581B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +19,14 @@ Global
 		{34D47F4A-EEE7-46CB-9DBB-A1383345CF89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34D47F4A-EEE7-46CB-9DBB-A1383345CF89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34D47F4A-EEE7-46CB-9DBB-A1383345CF89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88900FD3-C397-46CD-90A0-2BDBB733B817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88900FD3-C397-46CD-90A0-2BDBB733B817}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88900FD3-C397-46CD-90A0-2BDBB733B817}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88900FD3-C397-46CD-90A0-2BDBB733B817}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6801B69-4587-45C3-8AAD-C10BAE506A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6801B69-4587-45C3-8AAD-C10BAE506A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6801B69-4587-45C3-8AAD-C10BAE506A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6801B69-4587-45C3-8AAD-C10BAE506A53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{24BBEBDF-4690-42E0-8751-39FFD43812CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24BBEBDF-4690-42E0-8751-39FFD43812CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24BBEBDF-4690-42E0-8751-39FFD43812CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24BBEBDF-4690-42E0-8751-39FFD43812CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB1FBC18-730D-4B8E-BF3B-1E70A8A581B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB1FBC18-730D-4B8E-BF3B-1E70A8A581B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB1FBC18-730D-4B8E-BF3B-1E70A8A581B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB1FBC18-730D-4B8E-BF3B-1E70A8A581B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

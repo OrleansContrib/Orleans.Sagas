@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Orleans.Sagas.Samples.Duke.Activities
+namespace Orleans.Sagas.Samples.Activities
 {
     public class KickAssConfig
     {

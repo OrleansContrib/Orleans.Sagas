@@ -1,14 +1,15 @@
-﻿using Orleans.Runtime;
-using Orleans.Sagas.Samples.Duke.Exceptions;
+﻿using Orleans.Sagas.Samples.Exceptions;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Duke.Activities
+namespace Orleans.Sagas.Samples.Activities
 {
     public class ChewBubblegumActivity : Activity
     {
         public override Task Execute()
         {
-            throw new AllOuttaGumException();
+            // comment in to test compensation.
+            //throw new AllOuttaGumException();
+            return Task.CompletedTask;
         }
 
         public override Task Compensate()

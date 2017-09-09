@@ -16,7 +16,7 @@ namespace Orleans.Sagas
 
         public async Task Abort()
         {
-            GetLogger().Warn(0, $"Aborting {GetType().Name} saga.");
+            GetLogger().Warn(0, $"Saga {this} received an abort request.");
 
             if (State.Status == SagaStatus.Aborted)
             {
@@ -53,6 +53,15 @@ namespace Orleans.Sagas
         public Task<SagaStatus> GetStatus()
         {
             return Task.FromResult(State.Status);
+        }
+
+        public Task<bool> HasCompleted()
+        {
+            return Task.FromResult(
+                State.Status == SagaStatus.Aborted ||
+                State.Status == SagaStatus.Compensated ||
+                State.Status == SagaStatus.Executed
+            );
         }
 
         public async Task ReceiveReminder(string reminderName, TickStatus status)
@@ -155,15 +164,15 @@ namespace Orleans.Sagas
                 try
                 {
                     currentActivity.Initialize(GrainFactory, GetLogger());
-                    GetLogger().Info($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
+                    GetLogger().Verbose($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
                     await currentActivity.Execute();
-                    GetLogger().Info($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
+                    GetLogger().Verbose($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
                     State.NumCompletedActivities++;
                     await WriteStateAsync();
                 }
                 catch (Exception e)
                 {
-                    GetLogger().Error(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
+                    GetLogger().Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
                     await WriteStateAsync();
@@ -184,9 +193,9 @@ namespace Orleans.Sagas
                     var currentActivity = activities[State.CompensationIndex];
 
                     currentActivity.Initialize(GrainFactory, GetLogger());
-                    GetLogger().Warn(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
+                    GetLogger().Verbose(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate();
-                    GetLogger().Warn(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
+                    GetLogger().Verbose(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }

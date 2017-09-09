@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Travel.Activities
+namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookHotelActivity : Activity<BookHotelConfig>
+    public class BookHireCarActivity : Activity<BookHireCarConfig>
     {
         public override Task Compensate()
         {

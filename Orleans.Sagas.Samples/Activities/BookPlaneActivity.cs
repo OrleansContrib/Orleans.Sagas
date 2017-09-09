@@ -1,15 +1,15 @@
-﻿using Orleans.Sagas.Samples.Travel.Exceptions;
+﻿using Orleans.Sagas.Samples.Exceptions;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Travel.Activities
+namespace Orleans.Sagas.Samples.Activities
 {
     public class BookPlaneActivity : Activity<BookPlaneConfig>
     {
-        public override async Task Execute()
+        public override Task Execute()
         {
-            // testing reminder interleaving by waiting for the first one.
-            await Task.Delay(75 * 1000);
+            // comment in to test compensation.
             //throw new SeatUnavailableException();
+            return Task.CompletedTask;
         }
 
         public override Task Compensate()

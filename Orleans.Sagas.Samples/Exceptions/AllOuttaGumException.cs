@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Orleans.Sagas.Samples.Duke.Exceptions
+namespace Orleans.Sagas.Samples.Exceptions
 {
     public class AllOuttaGumException : Exception
     {
