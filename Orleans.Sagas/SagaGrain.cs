@@ -14,7 +14,7 @@ namespace Orleans.Sagas
         private List<IActivity> activities;
         private bool isActive;
 
-        public async Task Abort()
+        public async Task RequestAbort()
         {
             GetLogger().Warn(0, $"Saga {this} received an abort request.");
 
@@ -27,8 +27,9 @@ namespace Orleans.Sagas
             State.Status = State.Status == SagaStatus.NotStarted
                 ? SagaStatus.Aborted
                 : SagaStatus.Compensating;
-
-            await WriteStateAsync();
+            
+            // register abort request in separate grain in-case storage is mutating.
+            await GetSagaCancellationGrain().RequestAbort();
 
             if (State.Status == SagaStatus.Compensating)
             {
@@ -83,6 +84,11 @@ namespace Orleans.Sagas
             return this.GetPrimaryKey().ToString();
         }
 
+        private ISagaCancellationGrain GetSagaCancellationGrain()
+        {
+            return GrainFactory.GetGrain<ISagaCancellationGrain>(this.GetPrimaryKey());
+        }
+
         private async Task<IGrainReminder> RegisterReminder()
         {
             var reminderTime = TimeSpan.FromMinutes(1);
@@ -92,8 +98,13 @@ namespace Orleans.Sagas
         private async Task ResumeNoWait()
         {
             isActive = true;
-
+            
             InstantiateActivities();
+
+            if (await GetSagaCancellationGrain().HasAbortBeenRequested())
+            {
+                await RequestAbort();
+            }
 
             while (State.Status == SagaStatus.Executing ||
                    State.Status == SagaStatus.Compensating)

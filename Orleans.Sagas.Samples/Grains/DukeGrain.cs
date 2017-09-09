@@ -23,7 +23,7 @@ namespace Orleans.Sagas.Samples.Grains
 
             var saga = await sagaBuilder.ExecuteSaga();
             
-            await saga.Abort();
+            await saga.RequestAbort();
 
             return saga;
         }
@@ -34,7 +34,7 @@ namespace Orleans.Sagas.Samples.Grains
 
             var saga = GrainFactory.GetSaga(sagaBuilder.Id);
 
-            await saga.Abort();
+            await saga.RequestAbort();
 
             return saga;
         }
@@ -45,7 +45,7 @@ namespace Orleans.Sagas.Samples.Grains
 
             var saga = GrainFactory.GetSaga(sagaBuilder.Id);
 
-            await saga.Abort();
+            await saga.RequestAbort();
 
             AddActivities(sagaBuilder);
 

@@ -10,7 +10,7 @@ namespace Orleans.Sagas
         /// Registers an intent to abort the saga.
         /// </summary>
         /// <returns></returns>
-        Task Abort();
+        Task RequestAbort();
         /// <summary>
         /// Executes a saga with the corresponding activities. Activities can only be supplied once,
         /// and will be ignored in subsequent calls to this method.

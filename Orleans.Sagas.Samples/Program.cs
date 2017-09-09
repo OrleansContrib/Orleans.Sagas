@@ -1,7 +1,6 @@
 ﻿using Orleans.Sagas.Samples.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples
@@ -45,7 +44,7 @@ namespace Orleans.Sagas.Samples
         static async Task ConcurrencySample(IClusterClient client)
         {
             var sagas = new List<ISagaGrain>();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 sagas.Add(await client.GetGrain<IDukeGrain>(i).Execute());
             }

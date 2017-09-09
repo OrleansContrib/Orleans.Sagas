@@ -1,5 +1,4 @@
-﻿using Orleans.Runtime;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
@@ -10,7 +9,6 @@ namespace Orleans.Sagas.Samples.Activities
             //Logger.Info($"Kicking ass {Config.KickAssCount} times...");
             for (int i = 0; i < Config.KickAssCount; i++)
             {
-                await Task.Delay(100);
                 //Logger.Info("Ass kicked.");
             }
         }
