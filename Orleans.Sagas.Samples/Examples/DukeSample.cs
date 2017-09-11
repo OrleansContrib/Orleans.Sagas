@@ -1,12 +1,23 @@
 ﻿using Orleans.Sagas.Samples.Activities;
-using Orleans.Sagas.Samples.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Grains
+namespace Orleans.Sagas.Samples.Examples
 {
-    public class DukeGrain : Grain, IDukeGrain
+    public class DukeSample : Sample
     {
-        public async Task<ISagaGrain> Execute()
+        public override async Task Execute()
+        {
+            await new List<ISagaGrain>
+            {
+                await ExecuteNormally(),
+                await ExecuteAndAbort(),
+                await AbortWithoutExecution(),
+                await AbortThenExecute()
+            }.Wait();
+        }
+
+        private async Task<ISagaGrain> ExecuteNormally()
         {
             var sagaBuilder = GrainFactory.CreateSaga();
 
@@ -22,7 +33,7 @@ namespace Orleans.Sagas.Samples.Grains
             AddActivities(sagaBuilder);
 
             var saga = await sagaBuilder.ExecuteSaga();
-            
+
             await saga.RequestAbort();
 
             return saga;
