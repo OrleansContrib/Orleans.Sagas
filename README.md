@@ -43,9 +43,10 @@ public class BookHireCarActivity : Activity<BookHireCarConfig>
 var sagaBuilder = GrainFactory.CreateSaga();
 
 // add activities to your saga, and optional associated configuration.
-sagaBuilder.AddActivity<BookHireCarActivity>(new BookHireCarConfig { HireCarRequestGuid = Guid.NewGuid(); });
-sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
-sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+sagaBuilder
+    .AddActivity<BookHireCarActivity>(new BookHireCarConfig { HireCarRequestGuid = Guid.NewGuid(); })
+    .AddActivity<BookHotelActivity>(new BookHotelConfig())
+    .AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
 // execute the saga (idempotent).
 var saga = await sagaBuilder.ExecuteSaga();
