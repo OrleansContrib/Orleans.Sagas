@@ -53,13 +53,13 @@ namespace Orleans.Sagas.Samples
 
         static async Task DukeSample(IClusterClient client)
         {
-            await WaitForSagas(new List<ISagaGrain>
+            await new List<ISagaGrain>
             {
                 await client.GetGrain<IDukeGrain>(0).Execute(),
                 await client.GetGrain<IDukeGrain>(1).ExecuteAndAbort(),
                 await client.GetGrain<IDukeGrain>(2).AbortWithoutExecution(),
                 await client.GetGrain<IDukeGrain>(3).AbortThenExecute()
-            });
+            }.Wait();
         }
 
         static async Task TravelSample(IClusterClient client)

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Orleans.Sagas.Samples.Activities;
 using Orleans.Sagas.Samples.Interfaces;
-using Orleans.Sagas.Samples.Activities;
+using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Grains
 {
@@ -8,7 +8,7 @@ namespace Orleans.Sagas.Samples.Grains
     {
         public async Task<ISagaGrain> RequestTransfer(int sourceAccount, int targetAccount, int amount)
         {
-            var sagaBuilder = GrainFactory.CreateSaga()
+            return await GrainFactory.CreateSaga()
                 .AddActivity<BalanceModificationActivity>(new BalanceModificationConfig {
                     Account = sourceAccount,
                     Amount = -amount
@@ -16,9 +16,8 @@ namespace Orleans.Sagas.Samples.Grains
                 .AddActivity<BalanceModificationActivity>(new BalanceModificationConfig {
                     Account = targetAccount,
                     Amount = amount
-                });
-
-            return await sagaBuilder.ExecuteSaga();
+                })
+                .ExecuteSaga();
         }
     }
 }
