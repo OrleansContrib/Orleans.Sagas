@@ -8,11 +8,10 @@ namespace Orleans.Sagas.Samples.Grains
     {
         public async Task<ISagaGrain> Execute()
         {
-            var sagaBuilder = GrainFactory.CreateSaga();
-
-            sagaBuilder.AddActivity<BookHireCarActivity>(new BookHireCarConfig());
-            sagaBuilder.AddActivity<BookHotelActivity>(new BookHotelConfig());
-            sagaBuilder.AddActivity<BookPlaneActivity>(new BookPlaneConfig());
+            var sagaBuilder = GrainFactory.CreateSaga()
+                .AddActivity<BookHireCarActivity>(new BookHireCarConfig())
+                .AddActivity<BookHotelActivity>(new BookHotelConfig())
+                .AddActivity<BookPlaneActivity>(new BookPlaneConfig());
 
             return await sagaBuilder.ExecuteSaga();
         }

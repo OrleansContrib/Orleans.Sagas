@@ -31,13 +31,17 @@ namespace Orleans.Sagas.Tests
         [Fact]
         public void CanAddActivity()
         {
-            subject.AddActivity<TestActivity>();
+            var builder = subject.AddActivity<TestActivity>();
+
+            Assert.NotNull(builder);
         }
 
         [Fact]
         public void CanAddActivityWithConfig()
         {
-            subject.AddActivity<TestConfigurableActivity>(1);
+            var builder = subject.AddActivity<TestConfigurableActivity>(1);
+
+            Assert.NotNull(builder);
         }
 
         [Fact]

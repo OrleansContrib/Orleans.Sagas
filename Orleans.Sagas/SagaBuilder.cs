@@ -21,7 +21,7 @@ namespace Orleans
             this.grainFactory = grainFactory;
         }
 
-        public void AddActivity<TActivity>() where TActivity : IActivity
+        public ISagaBuilder AddActivity<TActivity>() where TActivity : IActivity
         {
             var info = typeof(TActivity).GetTypeInfo();
 
@@ -31,9 +31,11 @@ namespace Orleans
             }
 
             AddActivity<TActivity>(null);
+
+            return this;
         }
 
-        public void AddActivity<TActivity>(object config) where TActivity : IActivity
+        public ISagaBuilder AddActivity<TActivity>(object config) where TActivity : IActivity
         {
             var info = typeof(TActivity).GetTypeInfo();
 
@@ -53,6 +55,8 @@ namespace Orleans
             }
 
             activities.Add(new Tuple<Type, object>(typeof(TActivity), config));
+
+            return this;
         }
 
         public async Task<ISagaGrain> ExecuteSaga()
