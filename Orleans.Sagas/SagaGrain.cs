@@ -12,7 +12,13 @@ namespace Orleans.Sagas
     {
         private static string ReminderName = typeof(SagaGrain).Name;
 
+        private readonly IGrainActivationContext grainContext;
         private bool isActive;
+
+        public SagaGrain(IGrainActivationContext grainContext)
+        {
+            this.grainContext = grainContext;
+        }
 
         public async Task RequestAbort()
         {
@@ -148,7 +154,7 @@ namespace Orleans.Sagas
 
                 try
                 {
-                    currentActivity.Initialize(this.GetPrimaryKey(), GrainFactory, GetLogger());
+                    currentActivity.Initialize(this.GetPrimaryKey(), this.grainContext);
                     GetLogger().Verbose($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
                     await currentActivity.Execute();
                     GetLogger().Verbose($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
@@ -177,7 +183,7 @@ namespace Orleans.Sagas
                 {
                     var currentActivity = State.Activities[State.CompensationIndex];
 
-                    currentActivity.Initialize(this.GetPrimaryKey(), GrainFactory, GetLogger());
+                    currentActivity.Initialize(this.GetPrimaryKey(), this.grainContext);
                     GetLogger().Verbose(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate();
                     GetLogger().Verbose(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
