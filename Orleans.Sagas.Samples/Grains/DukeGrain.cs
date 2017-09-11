@@ -57,8 +57,8 @@ namespace Orleans.Sagas.Samples.Grains
         private static void AddActivities(ISagaBuilder sagaBuilder)
         {
             sagaBuilder
-                .AddActivity<KickAssActivity>(new KickAssConfig { KickAssCount = 7 })
-                .AddActivity<ChewBubblegumActivity>();
+                .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
+                .AddActivity(new ChewBubblegumActivity());
         }
     }
 }

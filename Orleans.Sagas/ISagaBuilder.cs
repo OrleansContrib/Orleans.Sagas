@@ -13,17 +13,9 @@ namespace Orleans
         /// <summary>
         /// Adds an activity to this saga.
         /// </summary>
-        /// <typeparam name="TActivity">The activity type to add.</typeparam>
+        /// <param name="activity">The activity to add.</param>
         /// <returns>The ISagaBuilder.</returns>
-        ISagaBuilder AddActivity<TActivity>() where TActivity : IActivity;
-        /// <summary>
-        /// Adds an activity to this saga with a corresponding config.
-        /// The config must be of the same type as that of TActivityConfig in Activity<TActivityConfig>.
-        /// </summary>
-        /// <typeparam name="TActivity">The activity type to add.</typeparam>
-        /// <param name="config">The corresponding configuration for this activity.</param>
-        /// <returns>The ISagaBuilder.</returns>
-        ISagaBuilder AddActivity<TActivity>(object config) where TActivity : IActivity;
+        ISagaBuilder AddActivity(IActivity activity);
         /// <summary>
         /// Executes this saga and returns once the saga has been registered. Idempotent.
         /// </summary>

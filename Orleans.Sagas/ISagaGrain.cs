@@ -15,9 +15,9 @@ namespace Orleans.Sagas
         /// Executes a saga with the corresponding activities. Activities can only be supplied once,
         /// and will be ignored in subsequent calls to this method.
         /// </summary>
-        /// <param name="activities">The activities and associated configs for this saga.</param>
+        /// <param name="activities">The activities for this saga.</param>
         /// <returns></returns>
-        Task Execute(IEnumerable<Tuple<Type, object>> activities);
+        Task Execute(IEnumerable<IActivity> activities);
         /// <summary>
         /// Exposes the status of this saga.
         /// </summary>

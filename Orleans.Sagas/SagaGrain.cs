@@ -2,6 +2,7 @@
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -11,7 +12,6 @@ namespace Orleans.Sagas
     {
         private static string ReminderName = typeof(SagaGrain).Name;
 
-        private List<IActivity> activities;
         private bool isActive;
 
         public async Task RequestAbort()
@@ -37,12 +37,11 @@ namespace Orleans.Sagas
             }
         }
 
-        public async Task Execute(IEnumerable<Tuple<Type, object>> activities)
+        public async Task Execute(IEnumerable<IActivity> activities)
         {
             if (State.Status == SagaStatus.NotStarted)
             {
-                State.Activities = activities;
-                InstantiateActivities();
+                State.Activities = activities.ToList();
                 State.Status = SagaStatus.Executing;
                 await WriteStateAsync();
                 await RegisterReminder();
@@ -99,8 +98,6 @@ namespace Orleans.Sagas
         {
             isActive = true;
             
-            InstantiateActivities();
-
             if (await GetSagaCancellationGrain().HasAbortBeenRequested())
             {
                 await RequestAbort();
@@ -138,29 +135,6 @@ namespace Orleans.Sagas
             isActive = false;
         }
 
-        private void InstantiateActivities()
-        {
-            if (activities != null || State.HasBeenAborted)
-            {
-                return;
-            }
-
-            activities = new List<IActivity>();
-            foreach (var activityDefinition in State.Activities)
-            {
-                var type = activityDefinition.Item1;
-                var config = activityDefinition.Item2;
-                var activity = (IActivity)Activator.CreateInstance(type);
-                activities.Add(activity);
-                if (config != null)
-                {
-                    var genericType = typeof(IActivity<>).MakeGenericType(config.GetType());
-                    var method = genericType.GetTypeInfo().GetMethod("SetConfig");
-                    method.Invoke(activity, new object[] { config });
-                }
-            }
-        }
-
         private void ResumeNotStarted()
         {
             GetLogger().Error(0, $"Saga {this} is attempting to resume but was never started.");
@@ -168,9 +142,9 @@ namespace Orleans.Sagas
 
         private async Task ResumeExecuting()
         {
-            while (State.NumCompletedActivities < activities.Count)
+            while (State.NumCompletedActivities < State.Activities.Count)
             {
-                var currentActivity = activities[State.NumCompletedActivities];
+                var currentActivity = State.Activities[State.NumCompletedActivities];
 
                 try
                 {
@@ -201,7 +175,7 @@ namespace Orleans.Sagas
             {
                 try
                 {
-                    var currentActivity = activities[State.CompensationIndex];
+                    var currentActivity = State.Activities[State.CompensationIndex];
 
                     currentActivity.Initialize(this.GetPrimaryKey(), GrainFactory, GetLogger());
                     GetLogger().Verbose(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");

@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using System;
-using Orleans.Sagas.Exceptions;
 using System.Linq;
 
 namespace Orleans.Sagas.Tests
@@ -31,55 +30,15 @@ namespace Orleans.Sagas.Tests
         [Fact]
         public void CanAddActivity()
         {
-            var builder = subject.AddActivity<TestActivity>();
+            var builder = subject.AddActivity(new TestActivity());
 
             Assert.NotNull(builder);
-        }
-
-        [Fact]
-        public void CanAddActivityWithConfig()
-        {
-            var builder = subject.AddActivity<TestConfigurableActivity>(1);
-
-            Assert.NotNull(builder);
-        }
-
-        [Fact]
-        public void ThrowsIfActivityIsAddedWithIncompatibleConfig()
-        {
-            Assert.Throws<IncompatibleActivityAndConfigException>(() =>
-                subject.AddActivity<TestConfigurableActivity>(string.Empty)
-            );
-        }
-
-        [Fact]
-        public void ThrowsIfActivityWithConfigIsAddedWithoutAConfig()
-        {
-            Assert.Throws<ConfigNotProvidedException>(() =>
-                subject.AddActivity<TestConfigurableActivity>()
-            );
-        }
-
-        [Fact]
-        public void ThrowsIfActivityWithConfigIsAddedWithANullConfig()
-        {
-            Assert.Throws<ConfigNotProvidedException>(() =>
-                subject.AddActivity<TestConfigurableActivity>(null)
-            );
-        }
-
-        [Fact]
-        public void ThrowsIfActivityWithoutConfigIsAddedWithAConfig()
-        {
-            Assert.Throws<ConfigNotRequiredException>(() =>
-                subject.AddActivity<TestActivity>(1)
-            );
         }
 
         [Fact]
         public async Task CanExecuteSaga()
         {
-            subject.AddActivity<TestActivity>();
+            subject.AddActivity(new TestActivity());
             mockGrainFactory
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
@@ -94,7 +53,7 @@ namespace Orleans.Sagas.Tests
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
 
-            await Assert.ThrowsAsync<NoActivitiesInSagaException>(() =>
+            await Assert.ThrowsAsync<IndexOutOfRangeException>(() =>
                 subject.ExecuteSaga()
             );
         }

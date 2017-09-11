@@ -9,9 +9,9 @@ namespace Orleans.Sagas.Samples.Grains
         public async Task<ISagaGrain> Execute()
         {
             return await GrainFactory.CreateSaga()
-                .AddActivity<BookHireCarActivity>(new BookHireCarConfig())
-                .AddActivity<BookHotelActivity>(new BookHotelConfig())
-                .AddActivity<BookPlaneActivity>(new BookPlaneConfig())
+                .AddActivity(new BookHireCarActivity { Config = new BookHireCarConfig() })
+                .AddActivity(new BookHotelActivity())
+                .AddActivity(new BookPlaneActivity())
                 .ExecuteSaga();
         }
     }
