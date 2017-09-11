@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Orleans.Runtime;
-using System;
 
 namespace Orleans.Sagas
 {
@@ -11,26 +12,25 @@ namespace Orleans.Sagas
 
     public abstract class Activity : IActivity
     {
-        public virtual string Name => this.GetType().Name;
         [NonSerialized]
-        private IGrainFactory grainFactory;
-        [NonSerialized]
-        private Guid guid;
-        [NonSerialized]
-        private Logger logger;
+        private Guid sagaId;
 
-        public void Initialize(Guid sagaId, IGrainFactory grainFactory, Logger logger)
+        [NonSerialized]
+        private IGrainActivationContext grainContext;
+
+        public virtual string Name => this.GetType().Name;
+
+        public void Initialize(Guid sagaId, IGrainActivationContext grainContext)
         {
-            SagaId = sagaId;
-            GrainFactory = grainFactory;
-            Logger = logger;
+            this.sagaId = sagaId;
+            this.grainContext = grainContext;
         }
 
         public abstract Task Execute();
         public abstract Task Compensate();
 
-        protected Guid SagaId { get { return guid; } private set { guid = value; } }
-        protected IGrainFactory GrainFactory { get { return grainFactory; } private set { grainFactory = value; } }
-        protected Logger Logger { get { return logger; } private set { logger = value; } }
+        protected Guid SagaId { get { return sagaId; } }
+        protected IGrainActivationContext GrainContext { get { return grainContext; } }
+        protected IGrainFactory GrainFactory { get { return grainContext.ActivationServices.GetRequiredService<IGrainFactory>(); } }
     }
 }
