@@ -9,12 +9,11 @@ namespace Orleans.Sagas.Samples.Grains
         public async Task<ISagaGrain> RequestTransfer(int sourceAccount, int targetAccount, int amount)
         {
             var sagaBuilder = GrainFactory.CreateSaga()
-                .AddActivity<BalanceModificationActivity>(new BalanceModificationConfig
-                {
+                .AddActivity<BalanceModificationActivity>(new BalanceModificationConfig {
                     Account = sourceAccount,
                     Amount = -amount
-                }).AddActivity<BalanceModificationActivity>(new BalanceModificationConfig
-                {
+                })
+                .AddActivity<BalanceModificationActivity>(new BalanceModificationConfig {
                     Account = targetAccount,
                     Amount = amount
                 });
