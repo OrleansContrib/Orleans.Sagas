@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Orleans
+namespace Orleans.Sagas
 {
     public class SagaBuilder : ISagaBuilder
     {

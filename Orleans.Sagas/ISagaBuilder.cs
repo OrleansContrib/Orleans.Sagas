@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Orleans.Sagas;
 
-namespace Orleans
+namespace Orleans.Sagas
 {
     public interface ISagaBuilder
     {
