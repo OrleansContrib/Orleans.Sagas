@@ -1,7 +1,4 @@
-version: '{build}'  
-#branches:  
-#  only:
-#  - master
+version: '{build}'
 clone_depth: 1  
 nuget:  
   disable_publish_on_pr: true
@@ -11,11 +8,3 @@ test: off
 artifacts:  
 - path: ./Orleans.Sagas/**/*.nupkg
   name: NuGet
-deploy:  
-- provider: NuGet
-  name: production
-  api_key:
-    secure: xxxxxxxxxxxx
-  on:
-    branch: master
-    appveyor_repo_tag: true
