@@ -1,0 +1,21 @@
+version: '{build}'  
+#branches:  
+#  only:
+#  - master
+clone_depth: 1  
+nuget:  
+  disable_publish_on_pr: true
+build_script:  
+- ps: ./Build.ps1
+test: off  
+artifacts:  
+- path: ./Orleans.Sagas/**/*.nupkg
+  name: NuGet
+deploy:  
+- provider: NuGet
+  name: production
+  api_key:
+    secure: xxxxxxxxxxxx
+  on:
+    branch: master
+    appveyor_repo_tag: true

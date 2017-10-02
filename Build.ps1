@@ -1,0 +1,2 @@
+dotnet restore ./Orleans.Sagas/Orleans.Sagas.csproj --source https://dotnet.myget.org/F/orleans-prerelease/api/v3/index.json --source https://api.nuget.org/v3/index.json
+dotnet publish ./Orleans.Sagas/Orleans.Sagas.csproj
