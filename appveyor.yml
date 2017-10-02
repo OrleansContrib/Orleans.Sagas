@@ -1,0 +1,10 @@
+version: '{build}'
+clone_depth: 1  
+nuget:  
+  disable_publish_on_pr: true
+build_script:  
+- ps: ./Build.ps1
+test: off  
+artifacts:  
+- path: ./Orleans.Sagas/**/*.nupkg
+  name: NuGet
