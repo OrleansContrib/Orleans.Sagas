@@ -7,6 +7,8 @@ This is a demonstration of a programming model for sagas in Orleans for discussi
 This project uses pre-release .NET Core Orleans libraries so you'll need to add a reference to here:
 https://dotnet.myget.org/F/orleans-prerelease/api/v3/index.json
 
+You can install the package with **Install-Package Orleans.Sagas -Pre**
+
 # Usage
 
 
