@@ -4,13 +4,7 @@ A distributed saga implementation for Orleans.
 # Status
 The code has not been load tested and is therefore **not recommended for production use** yet.
 
-This project uses pre-release .NET Core Orleans libraries so you'll need to add a reference to here:
-https://dotnet.myget.org/F/orleans-prerelease/api/v3/index.json
-
-You can install the package with **Install-Package Orleans.Sagas -Pre**
-
 # Usage
-
 
 ## Designing activity configs
 ```
