@@ -11,25 +11,14 @@ namespace Orleans.Sagas
 
     public abstract class Activity : IActivity
     {
-        [NonSerialized]
-        private Guid sagaId;
+        public string Name { get; }
 
-        [NonSerialized]
-        private IGrainActivationContext grainContext;
-
-        public virtual string Name => this.GetType().Name;
-
-        public void Initialize(Guid sagaId, IGrainActivationContext grainContext)
+        public Activity()
         {
-            this.sagaId = sagaId;
-            this.grainContext = grainContext;
+            Name = GetType().Name;
         }
 
-        public abstract Task Execute();
-        public abstract Task Compensate();
-
-        protected Guid SagaId { get { return sagaId; } }
-        protected IGrainActivationContext GrainContext { get { return grainContext; } }
-        protected IGrainFactory GrainFactory { get { return grainContext.ActivationServices.GetRequiredServiceByName<IGrainFactory>(nameof(IGrainFactory)); } }
+        public abstract Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
+        public abstract Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Orleans.Sagas.Samples.Examples;
@@ -17,6 +18,10 @@ namespace Orleans.Sagas.Samples
                 {
                     siloBuilder
                         .UseLocalhostClustering()
+                        .ConfigureLogging(logging =>
+                        {
+                            logging.AddConsole();
+                        })
                         .Configure<ClusterOptions>(opts =>
                         {
                             opts.ClusterId = nameof(Sagas);
@@ -26,6 +31,10 @@ namespace Orleans.Sagas.Samples
                         {
                             opts.AdvertisedIPAddress = IPAddress.Loopback;
                         })
+                        .ConfigureApplicationParts(parts =>
+                        {
+                            parts.AddFrameworkPart(typeof(SagaGrain).Assembly);
+                        })
                         .ConfigureServices(services =>
                         {
                             services.AddTransient<BankTransferSample>();
@@ -34,7 +43,8 @@ namespace Orleans.Sagas.Samples
                             services.AddTransient<ConcurrencySample>();
                             services.AddHostedService<SampleRunner>();
                         })
-                        .AddMemoryGrainStorageAsDefault();
+                        .AddMemoryGrainStorageAsDefault()
+                        .UseInMemoryReminderService();
                 })
                 .RunConsoleAsync();
         }

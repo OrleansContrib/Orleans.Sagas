@@ -7,7 +7,7 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class ConcurrencySample : Sample
     {
-        public ConcurrencySample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
+        public ConcurrencySample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
         {
         }
 

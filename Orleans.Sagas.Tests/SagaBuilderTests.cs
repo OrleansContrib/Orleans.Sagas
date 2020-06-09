@@ -3,14 +3,15 @@ using Moq;
 using Xunit;
 using System;
 using System.Linq;
+using Orleans.Runtime;
 
 namespace Orleans.Sagas.Tests
 {
     public class SagaBuilderTests
     {
-        private ISagaBuilder subject;
+        private readonly ISagaBuilder subject;
 
-        private Mock<IGrainFactory> mockGrainFactory;
+        private readonly Mock<IGrainFactory> mockGrainFactory;
 
         public SagaBuilderTests()
         {
@@ -60,12 +61,12 @@ namespace Orleans.Sagas.Tests
 
         private class TestActivity : Activity
         {
-            public override Task Compensate()
+            public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute()
+            public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
             {
                 throw new NotImplementedException();
             }
@@ -73,12 +74,12 @@ namespace Orleans.Sagas.Tests
 
         private class TestConfigurableActivity : Activity<int>
         {
-            public override Task Compensate()
+            public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute()
+            public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
             {
                 throw new NotImplementedException();
             }
