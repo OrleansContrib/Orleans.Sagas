@@ -7,7 +7,7 @@ The code has not been load tested and is therefore **not recommended for product
 # Usage
 
 ## Designing activity configs
-```
+```csharp
 public class BookHireCarConfig
 {
     public bool IsClownCar { get; set; }
@@ -16,7 +16,7 @@ public class BookHireCarConfig
 ```
 
 ## Designing activities
-```
+```csharp
 public class BookHireCarActivity : Activity<BookHireCarConfig>
 {
     public override async Task Execute()
@@ -34,7 +34,7 @@ public class BookHireCarActivity : Activity<BookHireCarConfig>
 ```
 
 ## Executing a saga
-```
+```csharp
 // create a saga builder.
 var sagaBuilder = GrainFactory.CreateSaga();
 
