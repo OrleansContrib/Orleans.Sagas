@@ -5,12 +5,12 @@ namespace Orleans.Sagas.Samples
 {
     public abstract class Sample
     {
-        protected IGrainFactory Client { get; private set; }
+        protected IGrainFactory GrainFactory { get; private set; }
         protected ILogger<Sample> Logger { get; }
 
-        public Sample(IGrainFactory client, ILogger<Sample> logger)
+        public Sample(IGrainFactory grainFactory, ILogger<Sample> logger)
         {
-            Client = client;
+            GrainFactory = grainFactory;
             Logger = logger;
         }
 

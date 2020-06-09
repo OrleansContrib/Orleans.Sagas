@@ -6,13 +6,13 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class TravelSample : Sample
     {
-        public TravelSample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
+        public TravelSample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
         {
         }
 
         public override async Task Execute()
         {
-            var saga = await Client.CreateSaga()
+            var saga = await GrainFactory.CreateSaga()
                 .AddActivity(new BookHireCarActivity { Config = new BookHireCarConfig() })
                 .AddActivity(new BookHotelActivity())
                 .AddActivity(new BookPlaneActivity())

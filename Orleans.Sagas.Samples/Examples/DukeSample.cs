@@ -7,7 +7,7 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class DukeSample : Sample
     {
-        public DukeSample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
+        public DukeSample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
         {
         }
 
@@ -24,7 +24,7 @@ namespace Orleans.Sagas.Samples.Examples
 
         private async Task<ISagaGrain> ExecuteNormally()
         {
-            var sagaBuilder = Client.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
             AddActivities(sagaBuilder);
 
@@ -33,7 +33,7 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> ExecuteAndAbort()
         {
-            var sagaBuilder = Client.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
             AddActivities(sagaBuilder);
 
@@ -46,9 +46,9 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> AbortWithoutExecution()
         {
-            var sagaBuilder = Client.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
-            var saga = Client.GetSaga(sagaBuilder.Id);
+            var saga = GrainFactory.GetSaga(sagaBuilder.Id);
 
             await saga.RequestAbort();
 
@@ -57,9 +57,9 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> AbortThenExecute()
         {
-            var sagaBuilder = Client.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
-            var saga = Client.GetSaga(sagaBuilder.Id);
+            var saga = GrainFactory.GetSaga(sagaBuilder.Id);
 
             await saga.RequestAbort();
 

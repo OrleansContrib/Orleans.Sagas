@@ -7,7 +7,7 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class ConcurrencySample : Sample
     {
-        public ConcurrencySample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
+        public ConcurrencySample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Orleans.Sagas.Samples.Examples
 
         private async Task<ISagaGrain> ExecuteNormally()
         {
-            var sagaBuilder = Client.CreateSaga();
+            var sagaBuilder = GrainFactory.CreateSaga();
 
             sagaBuilder
                 .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })

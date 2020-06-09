@@ -9,15 +9,15 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class BankTransferSample : Sample
     {
-        public BankTransferSample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
+        public BankTransferSample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
         {
         }
 
         public override async Task Execute()
         {
             // add some funds to two bank accounts.
-            await Client.GetGrain<IBankAccountGrain>(1).ModifyBalance(Guid.Empty, 75);
-            await Client.GetGrain<IBankAccountGrain>(2).ModifyBalance(Guid.Empty, 75);
+            await GrainFactory.GetGrain<IBankAccountGrain>(1).ModifyBalance(Guid.Empty, 75);
+            await GrainFactory.GetGrain<IBankAccountGrain>(2).ModifyBalance(Guid.Empty, 75);
 
             // enact some transfers.
             await TransferAndWait(1, 2, 25);
@@ -35,14 +35,14 @@ namespace Orleans.Sagas.Samples.Examples
             Logger.Info("Account balances:");
             for (int accountId = 1; accountId <= 2; accountId++)
             {
-                var account = Client.GetGrain<IBankAccountGrain>(accountId);
+                var account = GrainFactory.GetGrain<IBankAccountGrain>(accountId);
                 Logger.Info($"  #{accountId} : {await account.GetBalance()}");
             }
         }
 
         private async Task<ISagaGrain> Transfer(int from, int to, int amount)
         {
-            return await Client.CreateSaga()
+            return await GrainFactory.CreateSaga()
                 .AddActivity(new BalanceModificationActivity
                 {
                     Config = new BalanceModificationConfig
