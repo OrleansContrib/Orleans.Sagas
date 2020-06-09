@@ -1,17 +1,17 @@
-﻿using Orleans.Runtime;
+﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples
 {
     public abstract class Sample
     {
-        protected IGrainFactory GrainFactory { get; private set; }
-        protected Logger Logger { get; private set; }
+        protected IGrainFactory Client { get; private set; }
+        protected ILogger<Sample> Logger { get; }
 
-        public void Initialize(IClusterClient client)
+        public Sample(IGrainFactory client, ILogger<Sample> logger)
         {
-            GrainFactory = client;
-            Logger = client.Logger;
+            Client = client;
+            Logger = logger;
         }
 
         public abstract Task Execute();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Orleans.Runtime;
 
 namespace Orleans.Sagas
@@ -31,6 +30,6 @@ namespace Orleans.Sagas
 
         protected Guid SagaId { get { return sagaId; } }
         protected IGrainActivationContext GrainContext { get { return grainContext; } }
-        protected IGrainFactory GrainFactory { get { return grainContext.ActivationServices.GetRequiredService<IGrainFactory>(); } }
+        protected IGrainFactory GrainFactory { get { return grainContext.ActivationServices.GetRequiredServiceByName<IGrainFactory>(nameof(IGrainFactory)); } }
     }
 }

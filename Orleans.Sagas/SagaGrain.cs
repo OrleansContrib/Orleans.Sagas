@@ -1,4 +1,5 @@
-﻿using Orleans.Concurrency;
+﻿using Microsoft.Extensions.Logging;
+using Orleans.Concurrency;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -10,19 +11,21 @@ namespace Orleans.Sagas
 {
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
-        private static string ReminderName = typeof(SagaGrain).Name;
+        private static readonly string ReminderName = nameof(SagaGrain);
 
         private readonly IGrainActivationContext grainContext;
+        private readonly ILogger<SagaGrain> logger;
         private bool isActive;
 
-        public SagaGrain(IGrainActivationContext grainContext)
+        public SagaGrain(IGrainActivationContext grainContext, ILogger<SagaGrain> logger)
         {
             this.grainContext = grainContext;
+            this.logger = logger;
         }
 
         public async Task RequestAbort()
         {
-            GetLogger().Warn(0, $"Saga {this} received an abort request.");
+            logger.Warn(0, $"Saga {this} received an abort request.");
 
             if (State.Status == SagaStatus.Aborted)
             {
@@ -143,7 +146,7 @@ namespace Orleans.Sagas
 
         private void ResumeNotStarted()
         {
-            GetLogger().Error(0, $"Saga {this} is attempting to resume but was never started.");
+            logger.Error(0, $"Saga {this} is attempting to resume but was never started.");
         }
 
         private async Task ResumeExecuting()
@@ -155,15 +158,15 @@ namespace Orleans.Sagas
                 try
                 {
                     currentActivity.Initialize(this.GetPrimaryKey(), this.grainContext);
-                    GetLogger().Verbose($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
+                    logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
                     await currentActivity.Execute();
-                    GetLogger().Verbose($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
+                    logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
                     State.NumCompletedActivities++;
                     await WriteStateAsync();
                 }
                 catch (Exception e)
                 {
-                    GetLogger().Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
+                    logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
                     await WriteStateAsync();
@@ -184,9 +187,9 @@ namespace Orleans.Sagas
                     var currentActivity = State.Activities[State.CompensationIndex];
 
                     currentActivity.Initialize(this.GetPrimaryKey(), this.grainContext);
-                    GetLogger().Verbose(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
+                    logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate();
-                    GetLogger().Verbose(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
+                    logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }
@@ -206,7 +209,7 @@ namespace Orleans.Sagas
 
         private void ResumeCompleted()
         {
-            GetLogger().Info($"Saga {this} has completed with status '{State.Status}'.");
+            logger.Info($"Saga {this} has completed with status '{State.Status}'.");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Orleans.Sagas.Samples.Activities;
+﻿using Microsoft.Extensions.Logging;
+using Orleans.Sagas.Samples.Activities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,6 +7,10 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class ConcurrencySample : Sample
     {
+        public ConcurrencySample(IGrainFactory client, ILogger<Sample> logger) : base(client, logger)
+        {
+        }
+
         public override async Task Execute()
         {
             var sagas = new List<ISagaGrain>();
@@ -18,7 +23,7 @@ namespace Orleans.Sagas.Samples.Examples
 
         private async Task<ISagaGrain> ExecuteNormally()
         {
-            var sagaBuilder = GrainFactory.CreateSaga();
+            var sagaBuilder = Client.CreateSaga();
 
             sagaBuilder
                 .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
