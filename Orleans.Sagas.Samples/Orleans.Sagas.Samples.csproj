@@ -10,22 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Orleans.Sagas\Activity.cs" Link="Temp\Activity.cs" />
-    <Compile Include="..\Orleans.Sagas\IActivity.cs" Link="Temp\IActivity.cs" />
-    <Compile Include="..\Orleans.Sagas\IGrainFactorySagaExtensions.cs" Link="Temp\IGrainFactorySagaExtensions.cs" />
-    <Compile Include="..\Orleans.Sagas\ISagaBuilder.cs" Link="Temp\ISagaBuilder.cs" />
-    <Compile Include="..\Orleans.Sagas\ISagaCancellationGrain.cs" Link="Temp\ISagaCancellationGrain.cs" />
-    <Compile Include="..\Orleans.Sagas\ISagaGrain.cs" Link="Temp\ISagaGrain.cs" />
-    <Compile Include="..\Orleans.Sagas\ISagaGrainExtensions.cs" Link="Temp\ISagaGrainExtensions.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaBuilder.cs" Link="Temp\SagaBuilder.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaCancellationGrain.cs" Link="Temp\SagaCancellationGrain.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaCancellationGrainState.cs" Link="Temp\SagaCancellationGrainState.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaGrain.cs" Link="Temp\SagaGrain.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaState.cs" Link="Temp\SagaState.cs" />
-    <Compile Include="..\Orleans.Sagas\SagaStatus.cs" Link="Temp\SagaStatus.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
     <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
@@ -37,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Temp\" />
+    <ProjectReference Include="..\Orleans.Sagas\Orleans.Sagas.csproj" />
   </ItemGroup>
 
 </Project>

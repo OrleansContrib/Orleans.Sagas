@@ -33,7 +33,8 @@ namespace Orleans.Sagas.Samples
                         })
                         .ConfigureApplicationParts(parts =>
                         {
-                            parts.AddFrameworkPart(typeof(SagaGrain).Assembly);
+                            parts.AddFromAppDomain();
+                            parts.AddFrameworkPart(typeof(SagaGrain).Assembly).WithReferences();
                         })
                         .ConfigureServices(services =>
                         {
