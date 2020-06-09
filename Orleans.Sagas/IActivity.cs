@@ -7,8 +7,7 @@ namespace Orleans.Sagas
     public interface IActivity
     {
         string Name { get; }
-        void Initialize(Guid sagaId, IGrainActivationContext grainContext);
-        Task Execute();
-        Task Compensate();
+        Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
+        Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
     }
 }

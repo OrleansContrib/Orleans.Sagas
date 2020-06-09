@@ -1,4 +1,5 @@
-﻿using Orleans.Sagas.Samples.Activities;
+﻿using Microsoft.Extensions.Logging;
+using Orleans.Sagas.Samples.Activities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,6 +7,10 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class DukeSample : Sample
     {
+        public DukeSample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
+        {
+        }
+
         public override async Task Execute()
         {
             await new List<ISagaGrain>

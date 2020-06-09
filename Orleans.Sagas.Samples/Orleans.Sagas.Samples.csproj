@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,14 +10,34 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Core" Version="2.0.0-beta1" />
-    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.0.0-beta1" />
-    <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="2.0.0-beta1" />
-    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="2.0.0-beta1" />
+    <Compile Include="..\Orleans.Sagas\Activity.cs" Link="Temp\Activity.cs" />
+    <Compile Include="..\Orleans.Sagas\IActivity.cs" Link="Temp\IActivity.cs" />
+    <Compile Include="..\Orleans.Sagas\IGrainFactorySagaExtensions.cs" Link="Temp\IGrainFactorySagaExtensions.cs" />
+    <Compile Include="..\Orleans.Sagas\ISagaBuilder.cs" Link="Temp\ISagaBuilder.cs" />
+    <Compile Include="..\Orleans.Sagas\ISagaCancellationGrain.cs" Link="Temp\ISagaCancellationGrain.cs" />
+    <Compile Include="..\Orleans.Sagas\ISagaGrain.cs" Link="Temp\ISagaGrain.cs" />
+    <Compile Include="..\Orleans.Sagas\ISagaGrainExtensions.cs" Link="Temp\ISagaGrainExtensions.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaBuilder.cs" Link="Temp\SagaBuilder.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaCancellationGrain.cs" Link="Temp\SagaCancellationGrain.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaCancellationGrainState.cs" Link="Temp\SagaCancellationGrainState.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaGrain.cs" Link="Temp\SagaGrain.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaState.cs" Link="Temp\SagaState.cs" />
+    <Compile Include="..\Orleans.Sagas\SagaStatus.cs" Link="Temp\SagaStatus.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orleans.Sagas\Orleans.Sagas.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Orleans.Core" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Temp\" />
   </ItemGroup>
 
 </Project>

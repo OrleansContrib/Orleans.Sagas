@@ -1,4 +1,5 @@
-﻿using Orleans.Runtime;
+﻿using Microsoft.Extensions.Logging;
+using Orleans.Runtime;
 using Orleans.Sagas.Samples.Activities;
 using Orleans.Sagas.Samples.Interfaces;
 using System;
@@ -8,6 +9,10 @@ namespace Orleans.Sagas.Samples.Examples
 {
     public class BankTransferSample : Sample
     {
+        public BankTransferSample(IGrainFactory grainFactory, ILogger<Sample> logger) : base(grainFactory, logger)
+        {
+        }
+
         public override async Task Execute()
         {
             // add some funds to two bank accounts.
