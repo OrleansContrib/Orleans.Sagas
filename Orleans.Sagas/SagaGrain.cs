@@ -52,8 +52,8 @@ namespace Orleans.Sagas
             {
                 State.Activities = activities.ToList();
                 State.Status = SagaStatus.Executing;
-                await WriteStateAsync();
                 await RegisterReminder();
+                await WriteStateAsync();
             }
 
             await Resume();
