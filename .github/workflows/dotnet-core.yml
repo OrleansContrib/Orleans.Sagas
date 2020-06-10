@@ -26,5 +26,5 @@ jobs:
     - name: Publish NuGet
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
-        # Filepath of the project to be packaged, relative to root of repository
         PROJECT_FILE_PATH: "Orleans.Sagas/Orleans.Sagas.csproj"
+        NUGET_KEY: ${{secrets.NUGET_KEY}}
