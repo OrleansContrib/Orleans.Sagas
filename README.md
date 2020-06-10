@@ -1,7 +1,10 @@
 # Orleans.Sagas
 A distributed saga implementation for Orleans.
 
-# Status
+# Build Status
+![.NET Core](https://github.com/OrleansContrib/Orleans.Sagas/workflows/.NET%20Core/badge.svg)
+
+# Project Status
 The code has not been load tested and is therefore **not recommended for production use** yet.
 
 # Usage
