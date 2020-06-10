@@ -1,8 +1,9 @@
 # Orleans.Sagas
-A distributed saga implementation for Orleans.
+A distributed saga implementation for Orleans
 
-# Build Status
-![.NET Core](https://github.com/OrleansContrib/Orleans.Sagas/workflows/.NET%20Core/badge.svg)
+[![.NET Core](https://github.com/OrleansContrib/Orleans.Sagas/workflows/.NET%20Core/badge.svg)
+[![NuGet](https://img.shields.io/nuget/v/Orleans.Sagas.svg?style=flat)](http://www.nuget.org/profiles/Orleans.Sagas)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OrleansContrib/Orleans.Sagas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Project Status
 The code has not been load tested and is therefore **not recommended for production use** yet.
