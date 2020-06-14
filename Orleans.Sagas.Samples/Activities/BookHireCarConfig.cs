@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Orleans.Sagas.Samples.Activities
+﻿namespace Orleans.Sagas.Samples.Activities
 {
     public class BookHireCarConfig
     {
+        public int HireCarModel { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace Orleans.Sagas.Tests
         [Fact]
         public void CanAddActivity()
         {
-            var builder = subject.AddActivity(new TestActivity());
+            var builder = subject.AddActivity<TestActivity>();
 
             Assert.NotNull(builder);
         }
@@ -39,12 +39,12 @@ namespace Orleans.Sagas.Tests
         [Fact]
         public async Task CanExecuteSaga()
         {
-            subject.AddActivity(new TestActivity());
+            subject.AddActivity<TestActivity>();
             mockGrainFactory
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
 
-            await subject.ExecuteSaga();
+            await subject.ExecuteSagaAsync();
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Orleans.Sagas.Tests
                 .Returns(new Mock<ISagaGrain>().Object);
 
             await Assert.ThrowsAsync<IndexOutOfRangeException>(() =>
-                subject.ExecuteSaga()
+                subject.ExecuteSagaAsync()
             );
         }
 

@@ -14,12 +14,14 @@ namespace Orleans.Sagas
         private static readonly string ReminderName = nameof(SagaGrain);
 
         private readonly IGrainActivationContext grainContext;
+        private readonly IServiceProvider serviceProvider;
         private readonly ILogger<SagaGrain> logger;
         private bool isActive;
 
-        public SagaGrain(IGrainActivationContext grainContext, ILogger<SagaGrain> logger)
+        public SagaGrain(IGrainActivationContext grainContext, IServiceProvider serviceProvider, ILogger<SagaGrain> logger)
         {
             this.grainContext = grainContext;
+            this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
 
@@ -46,7 +48,7 @@ namespace Orleans.Sagas
             }
         }
 
-        public async Task Execute(IEnumerable<IActivity> activities)
+        public async Task Execute(IEnumerable<ActivityDefinition> activities)
         {
             if (State.Status == SagaStatus.NotStarted)
             {
@@ -149,11 +151,30 @@ namespace Orleans.Sagas
             logger.Error(0, $"Saga {this} is attempting to resume but was never started.");
         }
 
+        private IActivity GetActivity(ActivityDefinition definition)
+        {
+            var activity = (IActivity)serviceProvider.GetService(definition.Type);
+
+            var hasConfig = definition.GetType().GetProperties().Any(x => x.Name == nameof(Activity<object>.Config));
+
+            if (!hasConfig)
+            {
+                return activity;
+            }
+
+            var prop = activity.GetType().GetProperty(nameof(Activity<object>.Config));
+            var value = definition.GetType().GetProperty(nameof(ActivityDefinition<object>.Config)).GetValue(definition);
+
+            prop.SetValue(activity, value);
+
+            return activity;
+        }
+
         private async Task ResumeExecuting()
         {
             while (State.NumCompletedActivities < State.Activities.Count)
             {
-                var currentActivity = State.Activities[State.NumCompletedActivities];
+                var currentActivity = GetActivity(State.Activities[State.NumCompletedActivities]);
 
                 try
                 {
@@ -183,7 +204,7 @@ namespace Orleans.Sagas
             {
                 try
                 {
-                    var currentActivity = State.Activities[State.CompensationIndex];
+                    var currentActivity = GetActivity(State.Activities[State.CompensationIndex]);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate(this.GetPrimaryKey(), GrainFactory, grainContext);

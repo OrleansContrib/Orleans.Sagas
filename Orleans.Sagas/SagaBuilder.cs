@@ -7,25 +7,43 @@ namespace Orleans.Sagas
 {
     public class SagaBuilder : ISagaBuilder
     {
-        private List<IActivity> activities;
-        private IGrainFactory grainFactory;
+        private readonly List<ActivityDefinition> activities;
+        private readonly IGrainFactory grainFactory;
 
         public Guid Id { get; private set; }
 
-        public SagaBuilder(IGrainFactory grainFactory)
+        public SagaBuilder(IGrainFactory grainFactory) : this(grainFactory, Guid.NewGuid())
         {
-            Id = Guid.NewGuid();
-            this.activities = new List<IActivity>();
-            this.grainFactory = grainFactory;
         }
 
-        public ISagaBuilder AddActivity(IActivity activity)
+        public SagaBuilder(IGrainFactory grainFactory, Guid id)
         {
-            activities.Add(activity);
+            this.grainFactory = grainFactory;
+            Id = id;
+            activities = new List<ActivityDefinition>();
+        }
+
+        public ISagaBuilder AddActivity<TActivity>() where TActivity : IActivity
+        {
+            activities.Add(new ActivityDefinition(typeof(TActivity)));
             return this;
         }
 
-        public async Task<ISagaGrain> ExecuteSaga()
+        public ISagaBuilder AddActivity<TActivity, TConfig>(TConfig config) where TActivity : IActivity<TConfig>
+        {
+            activities.Add(new ActivityDefinition<TConfig>(typeof(TActivity), config));
+            return this;
+        }
+
+        public ISagaBuilder AddActivity<TActivity, TConfig>(Action<TConfig> configDelegate) where TActivity : IActivity<TConfig>
+        {
+            var config = Activator.CreateInstance<TConfig>();
+            configDelegate.Invoke(config);
+            AddActivity<TActivity, TConfig>(config);
+            return this;
+        }
+
+        public async Task<ISagaGrain> ExecuteSagaAsync()
         {
             if (activities.Count == 0)
             {

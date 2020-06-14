@@ -5,6 +5,7 @@ using Orleans.Configuration;
 using Orleans.Hosting;
 using Orleans.Sagas.Samples.Examples;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples
@@ -18,6 +19,7 @@ namespace Orleans.Sagas.Samples
                 {
                     siloBuilder
                         .UseLocalhostClustering()
+                        .UseSagas()
                         .ConfigureLogging(logging =>
                         {
                             logging.AddConsole();
@@ -38,6 +40,9 @@ namespace Orleans.Sagas.Samples
                         })
                         .ConfigureServices(services =>
                         {
+                            services.AddSingleton<HttpClient>();
+
+                            services.AddTransient<DependencyInjectionSample>();
                             services.AddTransient<BankTransferSample>();
                             services.AddTransient<DukeSample>();
                             services.AddTransient<TravelSample>();

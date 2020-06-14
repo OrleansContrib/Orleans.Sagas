@@ -4,9 +4,9 @@ using Orleans.Runtime;
 
 namespace Orleans.Sagas
 {
-    public abstract class Activity<TConfig> : Activity
+    public abstract class Activity<TConfig> : Activity, IActivity<TConfig>
     {
-        public TConfig Config { set; get; }
+        public TConfig Config { get; set; }
     }
 
     public abstract class Activity : IActivity

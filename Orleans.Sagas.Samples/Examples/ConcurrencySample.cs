@@ -26,10 +26,10 @@ namespace Orleans.Sagas.Samples.Examples
             var sagaBuilder = GrainFactory.CreateSaga();
 
             sagaBuilder
-                .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
-                .AddActivity(new ChewBubblegumActivity());
+                .AddActivity<KickAssActivity, KickAssConfig>(x => x.KickAssCount = 7)
+                .AddActivity<ChewBubblegumActivity>();
 
-            return await sagaBuilder.ExecuteSaga();
+            return await sagaBuilder.ExecuteSagaAsync();
         }
     }
 }

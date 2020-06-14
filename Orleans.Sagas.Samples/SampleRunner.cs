@@ -10,6 +10,7 @@ namespace Orleans.Sagas.Samples
         private readonly Sample[] samples;
 
         public SampleRunner(
+            DependencyInjectionSample dependencyInjectionSample,
             BankTransferSample bankTransferSample,
             ConcurrencySample concurrencySample,
             DukeSample dukeSample,
@@ -17,6 +18,7 @@ namespace Orleans.Sagas.Samples
         {
             samples = new Sample[]
             {
+                dependencyInjectionSample,
                 bankTransferSample,
                 concurrencySample,
                 dukeSample,

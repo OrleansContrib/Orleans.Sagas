@@ -28,7 +28,7 @@ namespace Orleans.Sagas.Samples.Examples
 
             AddActivities(sagaBuilder);
 
-            return await sagaBuilder.ExecuteSaga();
+            return await sagaBuilder.ExecuteSagaAsync();
         }
 
         public async Task<ISagaGrain> ExecuteAndAbort()
@@ -37,7 +37,7 @@ namespace Orleans.Sagas.Samples.Examples
 
             AddActivities(sagaBuilder);
 
-            var saga = await sagaBuilder.ExecuteSaga();
+            var saga = await sagaBuilder.ExecuteSagaAsync();
 
             await saga.RequestAbort();
 
@@ -65,7 +65,7 @@ namespace Orleans.Sagas.Samples.Examples
 
             AddActivities(sagaBuilder);
 
-            await sagaBuilder.ExecuteSaga();
+            await sagaBuilder.ExecuteSagaAsync();
 
             return saga;
         }
@@ -73,8 +73,8 @@ namespace Orleans.Sagas.Samples.Examples
         private static void AddActivities(ISagaBuilder sagaBuilder)
         {
             sagaBuilder
-                .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
-                .AddActivity(new ChewBubblegumActivity());
+                .AddActivity<KickAssActivity, KickAssConfig>(x => x.KickAssCount = 7)
+                .AddActivity<ChewBubblegumActivity>();
         }
     }
 }

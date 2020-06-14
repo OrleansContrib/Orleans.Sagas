@@ -13,10 +13,10 @@ namespace Orleans.Sagas.Samples.Examples
         public override async Task Execute()
         {
             var saga = await GrainFactory.CreateSaga()
-                .AddActivity(new BookHireCarActivity { Config = new BookHireCarConfig() })
-                .AddActivity(new BookHotelActivity())
-                .AddActivity(new BookPlaneActivity())
-                .ExecuteSaga();
+                .AddActivity<BookHireCarActivity, BookHireCarConfig>(x => x.HireCarModel = 1)
+                .AddActivity<BookHotelActivity>()
+                .AddActivity<BookPlaneActivity>()
+                .ExecuteSagaAsync();
 
             await saga.Wait();
         }
