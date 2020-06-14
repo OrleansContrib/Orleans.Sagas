@@ -29,7 +29,7 @@ namespace Orleans.Sagas.Samples.Examples
                 .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
                 .AddActivity(new ChewBubblegumActivity());
 
-            return await sagaBuilder.ExecuteSaga();
+            return await sagaBuilder.ExecuteSagaAsync();
         }
     }
 }

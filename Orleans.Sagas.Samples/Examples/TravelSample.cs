@@ -16,7 +16,7 @@ namespace Orleans.Sagas.Samples.Examples
                 .AddActivity(new BookHireCarActivity { Config = new BookHireCarConfig() })
                 .AddActivity(new BookHotelActivity())
                 .AddActivity(new BookPlaneActivity())
-                .ExecuteSaga();
+                .ExecuteSagaAsync();
 
             await saga.Wait();
         }

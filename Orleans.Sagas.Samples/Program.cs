@@ -38,6 +38,7 @@ namespace Orleans.Sagas.Samples
                         })
                         .ConfigureServices(services =>
                         {
+                            services.AddTransient<DependencyInjectionSample>();
                             services.AddTransient<BankTransferSample>();
                             services.AddTransient<DukeSample>();
                             services.AddTransient<TravelSample>();

@@ -12,11 +12,15 @@ namespace Orleans.Sagas
 
         public Guid Id { get; private set; }
 
-        public SagaBuilder(IGrainFactory grainFactory)
+        public SagaBuilder(IGrainFactory grainFactory) : this(grainFactory, Guid.NewGuid())
         {
-            Id = Guid.NewGuid();
-            this.activities = new List<IActivity>();
+        }
+
+        public SagaBuilder(IGrainFactory grainFactory, Guid id)
+        {
             this.grainFactory = grainFactory;
+            Id = id;
+            activities = new List<IActivity>();
         }
 
         public ISagaBuilder AddActivity(IActivity activity)
@@ -25,7 +29,7 @@ namespace Orleans.Sagas
             return this;
         }
 
-        public async Task<ISagaGrain> ExecuteSaga()
+        public async Task<ISagaGrain> ExecuteSagaAsync()
         {
             if (activities.Count == 0)
             {

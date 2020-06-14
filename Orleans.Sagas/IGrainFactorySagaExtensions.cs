@@ -16,6 +16,17 @@ namespace Orleans
         }
 
         /// <summary>
+        /// Provides an ISagaBuilder which can be used to prepare and execute a saga.
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="sagaId"></param>
+        /// <returns></returns>
+        public static ISagaBuilder CreateSaga(this IGrainFactory that, Guid sagaId)
+        {
+            return new SagaBuilder(that, sagaId);
+        }
+
+        /// <summary>
         /// Returns a saga instance.
         /// </summary>
         /// <param name="that"></param>

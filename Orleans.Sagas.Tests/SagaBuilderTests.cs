@@ -44,7 +44,7 @@ namespace Orleans.Sagas.Tests
                 .Setup(x => x.GetGrain<ISagaGrain>(It.IsAny<Guid>(), null))
                 .Returns(new Mock<ISagaGrain>().Object);
 
-            await subject.ExecuteSaga();
+            await subject.ExecuteSagaAsync();
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Orleans.Sagas.Tests
                 .Returns(new Mock<ISagaGrain>().Object);
 
             await Assert.ThrowsAsync<IndexOutOfRangeException>(() =>
-                subject.ExecuteSaga()
+                subject.ExecuteSagaAsync()
             );
         }
 

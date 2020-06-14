@@ -59,7 +59,7 @@ namespace Orleans.Sagas.Samples.Examples
                         Amount = amount
                     }
                 })
-                .ExecuteSaga();
+                .ExecuteSagaAsync();
         }
     }
 }
