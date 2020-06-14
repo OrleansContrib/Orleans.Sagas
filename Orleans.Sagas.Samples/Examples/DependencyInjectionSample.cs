@@ -15,6 +15,8 @@ namespace Orleans.Sagas.Samples.Examples
             await GrainFactory
                 .CreateSaga()
                 .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://dotnet.github.io/orleans/" )
+                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://dot.net" )
+                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://yahoo.com")
                 .ExecuteSagaAsync();
         }
     }

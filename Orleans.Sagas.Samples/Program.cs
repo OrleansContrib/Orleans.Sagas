@@ -18,6 +18,7 @@ namespace Orleans.Sagas.Samples
                 {
                     siloBuilder
                         .UseLocalhostClustering()
+                        .UseSagas()
                         .ConfigureLogging(logging =>
                         {
                             logging.AddConsole();
