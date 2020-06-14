@@ -14,12 +14,14 @@ namespace Orleans.Sagas
         private static readonly string ReminderName = nameof(SagaGrain);
 
         private readonly IGrainActivationContext grainContext;
+        private readonly IServiceProvider serviceProvider;
         private readonly ILogger<SagaGrain> logger;
         private bool isActive;
 
-        public SagaGrain(IGrainActivationContext grainContext, ILogger<SagaGrain> logger)
+        public SagaGrain(IGrainActivationContext grainContext, IServiceProvider serviceProvider, ILogger<SagaGrain> logger)
         {
             this.grainContext = grainContext;
+            this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
 
@@ -46,7 +48,7 @@ namespace Orleans.Sagas
             }
         }
 
-        public async Task Execute(IEnumerable<IActivity> activities)
+        public async Task Execute(IEnumerable<ActivityDefinition> activities)
         {
             if (State.Status == SagaStatus.NotStarted)
             {
@@ -153,7 +155,8 @@ namespace Orleans.Sagas
         {
             while (State.NumCompletedActivities < State.Activities.Count)
             {
-                var currentActivity = State.Activities[State.NumCompletedActivities];
+                var currentActivityDefinition = State.Activities[State.NumCompletedActivities];
+                var currentActivity = (IActivity)serviceProvider.GetService(currentActivityDefinition.Type);
 
                 try
                 {
@@ -183,7 +186,8 @@ namespace Orleans.Sagas
             {
                 try
                 {
-                    var currentActivity = State.Activities[State.CompensationIndex];
+                    var currentActivityDefinition = State.Activities[State.CompensationIndex];
+                    var currentActivity = (IActivity)serviceProvider.GetService(currentActivityDefinition.Type);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate(this.GetPrimaryKey(), GrainFactory, grainContext);

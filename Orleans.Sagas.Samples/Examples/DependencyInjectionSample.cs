@@ -14,7 +14,7 @@ namespace Orleans.Sagas.Samples.Examples
         {
             await GrainFactory
                 .CreateSaga()
-                .AddActivity<RequestActivity, RequestConfig>(new RequestConfig { Url = "https://dotnet.github.io/orleans/" })
+                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://dotnet.github.io/orleans/" )
                 .ExecuteSagaAsync();
         }
     }

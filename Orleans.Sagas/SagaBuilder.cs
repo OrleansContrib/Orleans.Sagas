@@ -7,8 +7,8 @@ namespace Orleans.Sagas
 {
     public class SagaBuilder : ISagaBuilder
     {
-        private List<IActivity> activities;
-        private IGrainFactory grainFactory;
+        private readonly List<ActivityDefinition> activities;
+        private readonly IGrainFactory grainFactory;
 
         public Guid Id { get; private set; }
 
@@ -20,12 +20,26 @@ namespace Orleans.Sagas
         {
             this.grainFactory = grainFactory;
             Id = id;
-            activities = new List<IActivity>();
+            activities = new List<ActivityDefinition>();
         }
 
-        public ISagaBuilder AddActivity(IActivity activity)
+        public ISagaBuilder AddActivity<TActivity>() where TActivity : IActivity
         {
-            activities.Add(activity);
+            activities.Add(new ActivityDefinition(typeof(TActivity)));
+            return this;
+        }
+
+        public ISagaBuilder AddActivity<TActivity, TConfig>(TConfig config) where TActivity : IActivity<TConfig>
+        {
+            activities.Add(new ActivityDefinition<TConfig>(typeof(TActivity), config));
+            return this;
+        }
+
+        public ISagaBuilder AddActivity<TActivity, TConfig>(Action<TConfig> configDelegate) where TActivity : IActivity<TConfig>
+        {
+            var config = Activator.CreateInstance<TConfig>();
+            configDelegate.Invoke(config);
+            AddActivity<TActivity, TConfig>(config);
             return this;
         }
 

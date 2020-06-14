@@ -73,8 +73,8 @@ namespace Orleans.Sagas.Samples.Examples
         private static void AddActivities(ISagaBuilder sagaBuilder)
         {
             sagaBuilder
-                .AddActivity(new KickAssActivity { Config = new KickAssConfig { KickAssCount = 7 } })
-                .AddActivity(new ChewBubblegumActivity());
+                .AddActivity<KickAssActivity, KickAssConfig>(x => x.KickAssCount = 7)
+                .AddActivity<ChewBubblegumActivity>();
         }
     }
 }
