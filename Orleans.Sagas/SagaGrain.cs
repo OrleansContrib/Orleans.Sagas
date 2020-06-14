@@ -151,12 +151,30 @@ namespace Orleans.Sagas
             logger.Error(0, $"Saga {this} is attempting to resume but was never started.");
         }
 
+        private IActivity GetActivity(ActivityDefinition definition)
+        {
+            var activity = (IActivity)serviceProvider.GetService(definition.Type);
+
+            var hasConfig = definition.GetType().GetProperties().Any(x => x.Name == nameof(Activity<object>.Config));
+
+            if (!hasConfig)
+            {
+                return activity;
+            }
+
+            var prop = activity.GetType().GetProperty(nameof(Activity<object>.Config));
+            var value = definition.GetType().GetProperty(nameof(ActivityDefinition<object>.Config)).GetValue(definition);
+
+            prop.SetValue(activity, value);
+
+            return activity;
+        }
+
         private async Task ResumeExecuting()
         {
             while (State.NumCompletedActivities < State.Activities.Count)
             {
-                var currentActivityDefinition = State.Activities[State.NumCompletedActivities];
-                var currentActivity = (IActivity)serviceProvider.GetService(currentActivityDefinition.Type);
+                var currentActivity = GetActivity(State.Activities[State.NumCompletedActivities]);
 
                 try
                 {
@@ -186,8 +204,7 @@ namespace Orleans.Sagas
             {
                 try
                 {
-                    var currentActivityDefinition = State.Activities[State.CompensationIndex];
-                    var currentActivity = (IActivity)serviceProvider.GetService(currentActivityDefinition.Type);
+                    var currentActivity = GetActivity(State.Activities[State.CompensationIndex]);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
                     await currentActivity.Compensate(this.GetPrimaryKey(), GrainFactory, grainContext);

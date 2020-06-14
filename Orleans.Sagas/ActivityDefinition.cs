@@ -4,6 +4,8 @@ namespace Orleans.Sagas
 {
     public class ActivityDefinition<TConfig> : ActivityDefinition
     {
+        public TConfig Config { get; }
+
         public ActivityDefinition() : base()
         {
         }
@@ -12,13 +14,11 @@ namespace Orleans.Sagas
         {
             Config = config;
         }
-
-        public TConfig Config { get; }
     }
 
     public class ActivityDefinition
     {
-        public Type Type;
+        public Type Type { get; }
 
         public ActivityDefinition()
         {
