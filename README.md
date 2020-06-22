@@ -15,6 +15,7 @@ The code has not been load tested and is therefore **not recommended for product
 public class BookHireCarConfig
 {
     public bool IsClownCar { get; set; }
+    public int HireCarModel { get; set; }
     public Guid HireCarRequestGuid { get; set; }
 }
 ```
