@@ -1,5 +1,5 @@
 ﻿using Orleans.Runtime;
-using Orleans.Sagas.Samples.Exceptions;
+using Orleans.Sagas.Samples.Activities.Exceptions;
 using System;
 using System.Threading.Tasks;
 

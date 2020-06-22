@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Orleans.Runtime;
 using Orleans.Sagas.Samples.Activities;
-using Orleans.Sagas.Samples.Interfaces;
+using Orleans.Sagas.Samples.Activities.Interfaces;
 using System;
 using System.Threading.Tasks;
 

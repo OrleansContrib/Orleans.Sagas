@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Orleans.Sagas.Samples.Interfaces
+namespace Orleans.Sagas.Samples.Activities.Interfaces
 {
     public interface IBankAccountGrain : IGrainWithIntegerKey
     {
