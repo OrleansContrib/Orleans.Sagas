@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Orleans.Sagas.Samples.Grains
+namespace Orleans.Sagas.Samples.Activities.Grains
 {
     public class BankAccountState
     {

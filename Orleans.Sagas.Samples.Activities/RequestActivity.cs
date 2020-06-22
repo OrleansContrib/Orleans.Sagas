@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    class RequestActivity : Activity<RequestConfig>
+    public class RequestActivity : Activity<RequestConfig>
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<RequestActivity> logger;

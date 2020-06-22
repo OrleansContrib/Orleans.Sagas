@@ -3,6 +3,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Orleans.Sagas.Samples.Activities;
+using Orleans.Sagas.Samples.Activities.Grains;
 using Orleans.Sagas.Samples.Examples;
 using System.Net;
 using System.Net.Http;
@@ -19,7 +21,7 @@ namespace Orleans.Sagas.Samples
                 {
                     siloBuilder
                         .UseLocalhostClustering()
-                        .UseSagas()
+                        .UseSagas(typeof(BalanceModificationActivity).Assembly)
                         .ConfigureLogging(logging =>
                         {
                             logging.AddConsole();
@@ -35,8 +37,8 @@ namespace Orleans.Sagas.Samples
                         })
                         .ConfigureApplicationParts(parts =>
                         {
-                            parts.AddFromAppDomain();
-                            parts.AddFrameworkPart(typeof(SagaGrain).Assembly).WithReferences();
+                            parts.AddSagaParts();
+                            parts.AddFrameworkPart(typeof(BankAccountGrain).Assembly).WithReferences();
                         })
                         .ConfigureServices(services =>
                         {

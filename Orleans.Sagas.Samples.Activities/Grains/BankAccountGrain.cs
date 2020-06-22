@@ -1,9 +1,9 @@
 ﻿using System;
-using Orleans.Sagas.Samples.Interfaces;
+using Orleans.Sagas.Samples.Activities.Interfaces;
 using System.Threading.Tasks;
-using Orleans.Sagas.Samples.Exceptions;
+using Orleans.Sagas.Samples.Activities.Exceptions;
 
-namespace Orleans.Sagas.Samples.Grains
+namespace Orleans.Sagas.Samples.Activities.Grains
 {
     public class BankAccountGrain : Grain<BankAccountState>, IBankAccountGrain
     {

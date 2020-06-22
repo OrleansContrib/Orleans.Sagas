@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Orleans.Sagas.Samples.Activities\Orleans.Sagas.Samples.Activities.csproj" />
     <ProjectReference Include="..\Orleans.Sagas\Orleans.Sagas.csproj" />
   </ItemGroup>
 

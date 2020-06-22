@@ -3,14 +3,17 @@ using Orleans.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Orleans.Sagas
 {
     public static class ISiloBuilderExtensions
     {
-        public static ISiloBuilder UseSagas(this ISiloBuilder builder)
+        public static ISiloBuilder UseSagas(this ISiloBuilder builder, params Assembly[] activityAssemblies)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = activityAssemblies is null
+                ? AppDomain.CurrentDomain.GetAssemblies()
+                : AppDomain.CurrentDomain.GetAssemblies().Concat(activityAssemblies);
 
             var interfaceType = typeof(IActivity);
 
