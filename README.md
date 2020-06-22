@@ -44,9 +44,9 @@ var sagaBuilder = GrainFactory.CreateSaga();
 
 // add activities to your saga, and optional associated configuration.
 sagaBuilder
-    .AddActivity(new BookHireCarActivity{Config = new BookHireCarConfig { HireCarRequestGuid = Guid.NewGuid(); }})
-    .AddActivity(new BookHotelActivity())
-    .AddActivity(new BookPlaneActivity())
+    .AddActivity<BookHireCarActivity, BookHireCarConfig>(x => x.HireCarModel = 1)
+    .AddActivity<BookHotelActivity>()
+    .AddActivity<BookPlaneActivity>()
 
 // execute the saga (idempotent).
 var saga = await sagaBuilder.ExecuteSaga();
