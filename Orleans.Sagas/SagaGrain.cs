@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Orleans.Concurrency;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas
@@ -44,7 +42,7 @@ namespace Orleans.Sagas
 
             if (State.Status == SagaStatus.Compensating)
             {
-                await Resume();
+                await ResumeAsync();
             }
         }
 
@@ -54,11 +52,11 @@ namespace Orleans.Sagas
             {
                 State.Activities = activities.ToList();
                 State.Status = SagaStatus.Executing;
-                await RegisterReminder();
                 await WriteStateAsync();
+                await RegisterReminderAsync();
             }
 
-            await Resume();
+            await ResumeAsync();
         }
 
         public Task<SagaStatus> GetStatus()
@@ -77,14 +75,14 @@ namespace Orleans.Sagas
 
         public async Task ReceiveReminder(string reminderName, TickStatus status)
         {
-            await Resume();
+            await ResumeAsync();
         }
 
-        public Task Resume()
+        public Task ResumeAsync()
         {
             if (!isActive)
             {
-                ResumeNoWait().Ignore();
+                ResumeNoWaitAsync().Ignore();
             }
             return Task.CompletedTask;
         }
@@ -99,13 +97,13 @@ namespace Orleans.Sagas
             return GrainFactory.GetGrain<ISagaCancellationGrain>(this.GetPrimaryKey());
         }
 
-        private async Task<IGrainReminder> RegisterReminder()
+        private async Task<IGrainReminder> RegisterReminderAsync()
         {
             var reminderTime = TimeSpan.FromMinutes(1);
             return await RegisterOrUpdateReminder(ReminderName, reminderTime, reminderTime);
         }
 
-        private async Task ResumeNoWait()
+        private async Task ResumeNoWaitAsync()
         {
             isActive = true;
             
@@ -140,7 +138,7 @@ namespace Orleans.Sagas
                     break;
             }
 
-            var reminder = await RegisterReminder();
+            var reminder = await RegisterReminderAsync();
             await UnregisterReminder(reminder);
 
             isActive = false;
@@ -189,12 +187,14 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
+                    // todo: handle failure here.
                     await WriteStateAsync();
                     return;
                 }
             }
 
             State.Status = SagaStatus.Executed;
+            // todo: handle failure here.
             await WriteStateAsync();
         }
 
@@ -223,6 +223,7 @@ namespace Orleans.Sagas
             State.Status = State.HasBeenAborted
                 ? SagaStatus.Aborted
                 : SagaStatus.Compensated;
+            // todo: handle failure here.
             await WriteStateAsync();
         }
 
