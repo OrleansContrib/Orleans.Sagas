@@ -12,6 +12,24 @@ The [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) is available a
 
 # Usage
 
+## Installing
+Install the [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) with a package manager.
+
+## Configuring Orleans for sagas
+Add the following statements to your Orleans silo builder, and don't forget **you'll need reminders and a default storage provider** configured for durability.
+```csharp
+.UseOrleans(siloBuilder =>
+{
+    siloBuilder
+        .UseSagas()
+        .ConfigureApplicationParts(parts =>
+        {
+            parts.AddSagaParts();
+        })
+        ...
+}
+```
+
 ## Designing activity configs
 ```csharp
 public class BookHireCarConfig
