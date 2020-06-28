@@ -31,6 +31,7 @@ namespace Orleans.Sagas
 
         public ISagaBuilder AddActivity<TActivity, TConfig>(TConfig config) where TActivity : IActivity<TConfig>
         {
+            // todo: serialize dynamic activity config safely.
             activities.Add(new ActivityDefinition<TConfig>(typeof(TActivity), config));
             return this;
         }
