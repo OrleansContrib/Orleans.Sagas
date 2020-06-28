@@ -6,7 +6,9 @@ A distributed saga implementation for Orleans
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OrleansContrib/Orleans.Sagas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 # Project Status
-The code has not been load tested and is therefore **not recommended for production use** yet.
+The library is currently in user acceptance testing with its first major consumer and is therefore **not recommended for production use** yet and will likely require subsequent API changes prior to a supported release. 
+
+The [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) is available as a preview, and in the absence of detailed documentation, the [gitter chat](https://gitter.im/OrleansContrib/Orleans.Sagas) is a good place to start.
 
 # Usage
 
