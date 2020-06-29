@@ -34,6 +34,6 @@ namespace Orleans.Sagas
         /// reminder scheduler.
         /// </summary>
         /// <returns></returns>
-        Task Resume();
+        Task ResumeAsync();
     }
 }
