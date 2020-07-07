@@ -16,7 +16,7 @@ namespace Orleans.Sagas
             Name = GetType().Name;
         }
 
-        public abstract Task Execute(IActivityRuntimeContext context);
-        public abstract Task Compensate(IActivityRuntimeContext context);
+        public abstract Task Execute(IActivityContext context);
+        public abstract Task Compensate(IActivityContext context);
     }
 }

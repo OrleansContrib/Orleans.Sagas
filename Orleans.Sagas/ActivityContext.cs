@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Orleans.Sagas
 {
-    public class ActivityRuntimeContext : IActivityRuntimeContext
+    public class ActivityContext : IActivityContext
     {
         public Guid SagaId { get; }
         public IGrainFactory GrainFactory { get; }
         public IGrainActivationContext GrainContext { get; }
         public ISagaPropertyBag SagaProperties { get; }
 
-        public ActivityRuntimeContext(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext, Dictionary<string, object> existingProperties)
+        public ActivityContext(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext, Dictionary<string, object> existingProperties)
         {
             SagaId = sagaId;
             GrainFactory = grainFactory;

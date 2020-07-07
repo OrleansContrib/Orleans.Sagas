@@ -3,7 +3,7 @@ using System;
 
 namespace Orleans.Sagas
 {
-    public interface IActivityRuntimeContext
+    public interface IActivityContext
     {
         Guid SagaId { get; }
         IGrainFactory GrainFactory { get; }

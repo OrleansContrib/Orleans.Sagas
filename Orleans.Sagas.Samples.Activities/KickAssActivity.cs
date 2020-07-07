@@ -6,7 +6,7 @@ namespace Orleans.Sagas.Samples.Activities
 {
     public class KickAssActivity : Activity<KickAssConfig>
     {
-        public override Task Execute(IActivityRuntimeContext context)
+        public override Task Execute(IActivityContext context)
         {
             //Logger.Info($"Kicking ass {Config.KickAssCount} times...");
             for (int i = 0; i < Config.KickAssCount; i++)
@@ -16,7 +16,7 @@ namespace Orleans.Sagas.Samples.Activities
             return Task.CompletedTask;
         }
 
-        public override Task Compensate(IActivityRuntimeContext context)
+        public override Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }

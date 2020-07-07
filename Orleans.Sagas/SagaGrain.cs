@@ -231,7 +231,7 @@ namespace Orleans.Sagas
             await WriteStateAsync();
         }
 
-        private void AddPropertiesToState(ActivityRuntimeContext context)
+        private void AddPropertiesToState(ActivityContext context)
         {
             var propertyBag = (SagaPropertyBag)context.SagaProperties;
             foreach (var property in propertyBag.ContextProperties)
@@ -241,9 +241,9 @@ namespace Orleans.Sagas
             
         }
 
-        private ActivityRuntimeContext CreateActivityRuntimeContext()
+        private ActivityContext CreateActivityRuntimeContext()
         {
-            return new ActivityRuntimeContext(
+            return new ActivityContext(
                 this.GetPrimaryKey(),
                 GrainFactory,
                 grainContext,

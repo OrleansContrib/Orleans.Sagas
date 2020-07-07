@@ -17,13 +17,13 @@ namespace Orleans.Sagas.Samples.Activities
             this.logger = logger;
         }
 
-        public override async Task Execute(IActivityRuntimeContext context)
+        public override async Task Execute(IActivityContext context)
         {
             var response = await httpClient.GetAsync(Config.Url);
             logger.LogInformation($"Retrieved {response.Content.Headers.ContentLength} bytes from '{Config.Url}'.");
         }
 
-        public override Task Compensate(IActivityRuntimeContext context)
+        public override Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }

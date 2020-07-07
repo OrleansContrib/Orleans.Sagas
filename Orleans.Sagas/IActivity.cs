@@ -10,7 +10,7 @@ namespace Orleans.Sagas
     public interface IActivity
     {
         string Name { get; }
-        Task Execute(IActivityRuntimeContext context);
-        Task Compensate(IActivityRuntimeContext context);
+        Task Execute(IActivityContext context);
+        Task Compensate(IActivityContext context);
     }
 }
