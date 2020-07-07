@@ -44,13 +44,13 @@ public class BookHireCarConfig
 ```csharp
 public class BookHireCarActivity : Activity<BookHireCarConfig>
 {
-    public override async Task Execute()
+    public override async Task Execute(IActivityRuntimeContext context)
     {
         // idempotently request a hire car from a hire car service.
         await HireCarService.Book(Config.HireCarRequestGuid, Config.IsClownCar);
     }
 
-    public override async Task Compensate()
+    public override async Task Compensate(IActivityRuntimeContext context)
     {
         // idempotently cancel a hire car request from a hire car service.
         await HireCarService.Cancel(Config.HireCarRequestGuid);
