@@ -6,12 +6,12 @@ namespace Orleans.Sagas.Samples.Activities
 {
     public class BookHotelActivity : Activity<BookHotelConfig>
     {
-        public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Compensate(IActivityRuntimeContext context)
         {
             return Task.CompletedTask;
         }
 
-        public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Execute(IActivityRuntimeContext context)
         {
             return Task.CompletedTask;
         }

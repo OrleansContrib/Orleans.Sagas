@@ -177,7 +177,7 @@ namespace Orleans.Sagas
                 try
                 {
                     logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
-                    await currentActivity.Execute(this.GetPrimaryKey(), GrainFactory, grainContext);
+                    await currentActivity.Execute(new ActivityRuntimeContext(this.GetPrimaryKey(), GrainFactory, grainContext));
                     logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
                     State.NumCompletedActivities++;
                     await WriteStateAsync();
@@ -207,7 +207,7 @@ namespace Orleans.Sagas
                     var currentActivity = GetActivity(State.Activities[State.CompensationIndex]);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
-                    await currentActivity.Compensate(this.GetPrimaryKey(), GrainFactory, grainContext);
+                    await currentActivity.Compensate(new ActivityRuntimeContext(this.GetPrimaryKey(), GrainFactory, grainContext));
                     logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();

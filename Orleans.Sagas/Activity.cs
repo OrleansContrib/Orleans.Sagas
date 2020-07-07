@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Orleans.Runtime;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
@@ -18,7 +16,7 @@ namespace Orleans.Sagas
             Name = GetType().Name;
         }
 
-        public abstract Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
-        public abstract Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext);
+        public abstract Task Execute(IActivityRuntimeContext context);
+        public abstract Task Compensate(IActivityRuntimeContext context);
     }
 }
