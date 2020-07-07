@@ -1,5 +1,4 @@
-﻿using Orleans.Runtime;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
@@ -8,6 +7,8 @@ namespace Orleans.Sagas.Samples.Activities
     {
         public override Task Execute(IActivityRuntimeContext context)
         {
+            var numSuitcases = context.SagaProperties.GetInt("NumSuitcases");
+
             // comment in to test compensation.
             //throw new SeatUnavailableException();
             return Task.CompletedTask;

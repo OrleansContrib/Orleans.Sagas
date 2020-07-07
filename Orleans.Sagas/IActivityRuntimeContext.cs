@@ -8,5 +8,6 @@ namespace Orleans.Sagas
         Guid SagaId { get; }
         IGrainFactory GrainFactory { get; }
         IGrainActivationContext GrainContext { get; }
+        ISagaPropertyBag SagaProperties { get; }
     }
 }

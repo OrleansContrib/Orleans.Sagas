@@ -1,6 +1,4 @@
-﻿using Orleans.Runtime;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
@@ -13,6 +11,8 @@ namespace Orleans.Sagas.Samples.Activities
 
         public override Task Execute(IActivityRuntimeContext context)
         {
+            context.SagaProperties.Add("NumSuitcases", 3);
+
             return Task.CompletedTask;
         }
     }
