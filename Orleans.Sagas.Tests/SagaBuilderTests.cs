@@ -61,12 +61,12 @@ namespace Orleans.Sagas.Tests
 
         private class TestActivity : Activity
         {
-            public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+            public override Task Compensate(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+            public override Task Execute(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
@@ -74,12 +74,12 @@ namespace Orleans.Sagas.Tests
 
         private class TestConfigurableActivity : Activity<int>
         {
-            public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+            public override Task Compensate(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+            public override Task Execute(IActivityContext context)
             {
                 throw new NotImplementedException();
             }

@@ -7,14 +7,14 @@ namespace Orleans.Sagas.Samples.Activities
 {
     public class ChewBubblegumActivity : Activity
     {
-        public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Execute(IActivityContext context)
         {
             // comment in to test compensation.
             //throw new AllOuttaGumException();
             return Task.CompletedTask;
         }
 
-        public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }

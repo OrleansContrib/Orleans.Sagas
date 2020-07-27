@@ -1,17 +1,15 @@
-﻿using Orleans.Runtime;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
     public class BookHotelActivity : Activity<BookHotelConfig>
     {
-        public override Task Compensate(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }
 
-        public override Task Execute(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext)
+        public override Task Execute(IActivityContext context)
         {
             return Task.CompletedTask;
         }

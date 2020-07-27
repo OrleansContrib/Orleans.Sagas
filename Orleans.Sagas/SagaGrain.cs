@@ -51,6 +51,7 @@ namespace Orleans.Sagas
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
+                State.Properties = new Dictionary<string, object>();
                 State.Status = SagaStatus.Executing;
                 await WriteStateAsync();
                 await RegisterReminderAsync();
@@ -177,9 +178,11 @@ namespace Orleans.Sagas
                 try
                 {
                     logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
-                    await currentActivity.Execute(this.GetPrimaryKey(), GrainFactory, grainContext);
+                    var context = CreateActivityRuntimeContext();
+                    await currentActivity.Execute(context);
                     logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
                     State.NumCompletedActivities++;
+                    AddPropertiesToState(context);
                     await WriteStateAsync();
                 }
                 catch (Exception e)
@@ -207,7 +210,8 @@ namespace Orleans.Sagas
                     var currentActivity = GetActivity(State.Activities[State.CompensationIndex]);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
-                    await currentActivity.Compensate(this.GetPrimaryKey(), GrainFactory, grainContext);
+                    var context = CreateActivityRuntimeContext();
+                    await currentActivity.Compensate(context);
                     logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();
@@ -225,6 +229,26 @@ namespace Orleans.Sagas
                 : SagaStatus.Compensated;
             // todo: handle failure here.
             await WriteStateAsync();
+        }
+
+        private void AddPropertiesToState(ActivityContext context)
+        {
+            var propertyBag = (SagaPropertyBag)context.SagaProperties;
+            foreach (var property in propertyBag.ContextProperties)
+            {
+                State.Properties.Add(property.Key, property.Value);
+            }
+            
+        }
+
+        private ActivityContext CreateActivityRuntimeContext()
+        {
+            return new ActivityContext(
+                this.GetPrimaryKey(),
+                GrainFactory,
+                grainContext,
+                State.Properties.ToDictionary(x => x.Key, y => y.Value)
+            );
         }
 
         private void ResumeCompleted()
