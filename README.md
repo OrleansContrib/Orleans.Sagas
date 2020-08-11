@@ -5,7 +5,10 @@ A distributed saga implementation for Orleans
 [![NuGet](https://img.shields.io/nuget/v/Orleans.Sagas.svg?style=flat)](https://www.nuget.org/packages/Orleans.Sagas)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OrleansContrib/Orleans.Sagas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-# Project Status
+# Overview
+Orleans.Sagas sits on top of the [Orleans](https://github.com/dotnet/orleans) framework, but does not require any knowledge of Orleans. It is designed to make it effortless to write robust and horizontally scalable sagas (compensatable workflows) for .NET with very little knowledge of distributed systems.
+
+# Status
 The library is currently in user acceptance testing with its first major consumer and is therefore **not recommended for production use** yet and will likely require subsequent API changes prior to a supported release. 
 
 The [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) is available as a preview, and in the absence of detailed documentation, the [gitter chat](https://gitter.im/OrleansContrib/Orleans.Sagas) is a good place to start.
