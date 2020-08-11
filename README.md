@@ -8,7 +8,7 @@ A distributed saga implementation for Orleans
 # Overview
 Orleans.Sagas sits on top of the [Orleans](https://github.com/dotnet/orleans) framework, but does not require any knowledge of Orleans. It is designed to make it effortless to write robust and horizontally scalable sagas (compensatable workflows) for .NET with very little knowledge of distributed systems.
 
-If you are familiar with Orleans, you can use Orleans.Sagas to orchestrate long running workflows which involve other Orleans grains.
+If you are familiar with Orleans you can use Orleans.Sagas to orchestrate long running workflows which involve other Orleans grains, or a combination of them and external services.
 
 # Status
 The library is currently in user acceptance testing with its first major consumer and is therefore **not recommended for production use** yet and will likely require subsequent API changes prior to a supported release. 
