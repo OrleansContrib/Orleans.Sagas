@@ -16,8 +16,9 @@ namespace Orleans.Sagas
         /// and will be ignored in subsequent calls to this method.
         /// </summary>
         /// <param name="activities">The activities for this saga.</param>
+        /// <param name="sagaProperties">The properties for this saga.</param>
         /// <returns></returns>
-        Task Execute(IEnumerable<ActivityDefinition> activities);
+        Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties);
         /// <summary>
         /// Exposes the status of this saga.
         /// </summary>

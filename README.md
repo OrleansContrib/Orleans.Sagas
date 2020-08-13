@@ -35,30 +35,20 @@ Add the following statements to your Orleans silo builder, and don't forget **yo
 }
 ```
 
-## Designing activity configs
-```csharp
-public class BookHireCarConfig
-{
-    public bool IsClownCar { get; set; }
-    public int HireCarModel { get; set; }
-    public Guid HireCarRequestGuid { get; set; }
-}
-```
-
 ## Designing activities
 ```csharp
-public class BookHireCarActivity : Activity<BookHireCarConfig>
+public class BookHireCarActivity : IActivity
 {
-    public override async Task Execute(IActivityContext context)
+    public async Task Execute(IActivityContext context)
     {
         // idempotently request a hire car from a hire car service.
-        await HireCarService.Book(Config.HireCarRequestGuid, Config.IsClownCar);
+        await HireCarService.Book(context.SagaId, context.SagaProperties.GetInt("HireCarModel"));
     }
 
-    public override async Task Compensate(IActivityContext context)
+    public async Task Compensate(IActivityContext context)
     {
         // idempotently cancel a hire car request from a hire car service.
-        await HireCarService.Cancel(Config.HireCarRequestGuid);
+        await HireCarService.Cancel(context.SagaId);
     }
 }
 ```
@@ -70,12 +60,12 @@ var sagaBuilder = GrainFactory.CreateSaga();
 
 // add activities to your saga, and optional associated configuration.
 sagaBuilder
-    .AddActivity<BookHireCarActivity, BookHireCarConfig>(x => x.HireCarModel = 1)
+    .AddActivity<BookHireCarActivity>()
     .AddActivity<BookHotelActivity>()
     .AddActivity<BookPlaneActivity>()
 
 // execute the saga (idempotent).
-var saga = await sagaBuilder.ExecuteSaga();
+var saga = await sagaBuilder.ExecuteSaga(x => x.Add("HireCarModel", 1));
 
 // abort the saga (idempotent).
 await saga.RequestAbort();

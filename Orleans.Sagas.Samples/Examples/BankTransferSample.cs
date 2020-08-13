@@ -43,20 +43,20 @@ namespace Orleans.Sagas.Samples.Examples
         private async Task<ISagaGrain> Transfer(int from, int to, int amount)
         {
             return await GrainFactory.CreateSaga()
-                .AddActivity<BalanceModificationActivity, BalanceModificationConfig>
+                .AddActivity<BalanceModificationActivity>
                 (
                     x =>
                     {
-                        x.Account = from;
-                        x.Amount = -amount;
+                        x.Add("Account", from);
+                        x.Add("Amount", -amount);
                     }
                 )
-                .AddActivity<BalanceModificationActivity, BalanceModificationConfig>
+                .AddActivity<BalanceModificationActivity>
                 (
                     x =>
                     {
-                        x.Account = to;
-                        x.Amount = amount;
+                        x.Add("Account", to);
+                        x.Add("Amount", amount);
                     }
                 )
                 .ExecuteSagaAsync();

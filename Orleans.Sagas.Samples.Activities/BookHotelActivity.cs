@@ -2,14 +2,14 @@
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookHotelActivity : Activity<BookHotelConfig>
+    public class BookHotelActivity : IActivity
     {
-        public override Task Compensate(IActivityContext context)
+        public Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }
 
-        public override Task Execute(IActivityContext context)
+        public Task Execute(IActivityContext context)
         {
             return Task.CompletedTask;
         }

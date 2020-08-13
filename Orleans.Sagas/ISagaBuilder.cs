@@ -21,22 +21,21 @@ namespace Orleans.Sagas
         /// Adds an activity to this saga.
         /// </summary>
         /// <typeparam name="TActivity">The activity to add.</typeparam>
-        /// <param name="config">The config for this activity.</param>
+        /// <param name="propertiesDelegate">The properties for this saga.</param>
         /// <returns>The ISagaBuilder.</returns>
-        ISagaBuilder AddActivity<TActivity, TConfig>(TConfig config) where TActivity : IActivity<TConfig>;
-
-        /// <summary>
-        /// Adds an activity to this saga.
-        /// </summary>
-        /// <typeparam name="TActivity">The activity to add.</typeparam>
-        /// <param name="configDelegate">The config for this activity.</param>
-        /// <returns>The ISagaBuilder.</returns>
-        ISagaBuilder AddActivity<TActivity, TConfig>(Action<TConfig> configDelegate) where TActivity : IActivity<TConfig>;
+        ISagaBuilder AddActivity<TActivity>(Action<ISagaPropertyBag> propertiesDelegate) where TActivity : IActivity;
 
         /// <summary>
         /// Executes this saga and returns once the saga has been registered. Idempotent.
         /// </summary>
         /// <returns>A reference to the saga.</returns>
         Task<ISagaGrain> ExecuteSagaAsync();
+
+        /// <summary>
+        /// Executes this saga and returns once the saga has been registered. Idempotent.
+        /// </summary>
+        /// <param name="propertiesDelegate">The properties for this saga.</param>
+        /// <returns>A reference to the saga.</returns>
+        Task<ISagaGrain> ExecuteSagaAsync(Action<ISagaPropertyBag> propertiesDelegate);
     }
 }

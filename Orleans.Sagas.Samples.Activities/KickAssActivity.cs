@@ -1,22 +1,16 @@
-﻿using Orleans.Runtime;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class KickAssActivity : Activity<KickAssConfig>
+    public class KickAssActivity : IActivity
     {
-        public override Task Execute(IActivityContext context)
+        public Task Execute(IActivityContext context)
         {
-            //Logger.Info($"Kicking ass {Config.KickAssCount} times...");
-            for (int i = 0; i < Config.KickAssCount; i++)
-            {
-                //Logger.Info("Ass kicked.");
-            }
+            var kickAssCount = context.SagaProperties.GetInt("KickAssCount");
             return Task.CompletedTask;
         }
 
-        public override Task Compensate(IActivityContext context)
+        public Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }

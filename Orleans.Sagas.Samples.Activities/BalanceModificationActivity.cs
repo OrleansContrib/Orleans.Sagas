@@ -3,18 +3,23 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BalanceModificationActivity : Activity<BalanceModificationConfig>
+    public class BalanceModificationActivity : IActivity
     {
-        public override async Task Execute(IActivityContext context)
+        public async Task Execute(IActivityContext context)
         {
-            var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(Config.Account);
+            var account = context.SagaProperties.GetInt("Account");
+            var amount = context.SagaProperties.GetInt("Amount");
 
-            await sourceAccount.ModifyBalance(context.SagaId, Config.Amount);
+            var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(account);
+
+            await sourceAccount.ModifyBalance(context.SagaId, amount);
         }
 
-        public override async Task Compensate(IActivityContext context)
+        public async Task Compensate(IActivityContext context)
         {
-            var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(Config.Account);
+            var account = context.SagaProperties.GetInt("Account");
+
+            var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(account);
 
             await sourceAccount.RevertBalanceModification(context.SagaId);
         }

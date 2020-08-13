@@ -5,9 +5,13 @@ namespace Orleans.Sagas
 {
     class SagaPropertyBag : ISagaPropertyBag
     {
-        private Dictionary<string, object> existingProperties;
+        private readonly Dictionary<string, object> existingProperties;
 
         public Dictionary<string, object> ContextProperties { get; }
+
+        public SagaPropertyBag() : this(new Dictionary<string, object>())
+        {
+        }
 
         public SagaPropertyBag(Dictionary<string, object> existingProperties)
         {

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookPlaneActivity : Activity<BookPlaneConfig>
+    public class BookPlaneActivity : IActivity
     {
-        public override Task Execute(IActivityContext context)
+        public Task Execute(IActivityContext context)
         {
             var numSuitcases = context.SagaProperties.GetInt("NumSuitcases");
 
@@ -14,7 +14,7 @@ namespace Orleans.Sagas.Samples.Activities
             return Task.CompletedTask;
         }
 
-        public override Task Compensate(IActivityContext context)
+        public Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }

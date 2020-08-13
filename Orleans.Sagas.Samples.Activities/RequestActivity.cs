@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Orleans.Runtime;
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class RequestActivity : Activity<RequestConfig>
+    public class RequestActivity : IActivity
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<RequestActivity> logger;
@@ -17,13 +15,14 @@ namespace Orleans.Sagas.Samples.Activities
             this.logger = logger;
         }
 
-        public override async Task Execute(IActivityContext context)
+        public async Task Execute(IActivityContext context)
         {
-            var response = await httpClient.GetAsync(Config.Url);
-            logger.LogInformation($"Retrieved {response.Content.Headers.ContentLength} bytes from '{Config.Url}'.");
+            var url = context.SagaProperties.GetString("Url");
+            var response = await httpClient.GetAsync(url);
+            logger.LogInformation($"Retrieved {response.Content.Headers.ContentLength} bytes from '{url}'.");
         }
 
-        public override Task Compensate(IActivityContext context)
+        public Task Compensate(IActivityContext context)
         {
             return Task.CompletedTask;
         }
