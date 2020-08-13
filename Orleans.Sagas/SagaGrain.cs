@@ -166,10 +166,10 @@ namespace Orleans.Sagas
 
                 try
                 {
-                    logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
+                    logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}'...");
                     var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Execute(context);
-                    logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
+                    logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}' complete.");
                     State.NumCompletedActivities++;
                     AddPropertiesToState(context);
                     await WriteStateAsync();
@@ -199,10 +199,10 @@ namespace Orleans.Sagas
                     var definition = State.Activities[State.CompensationIndex];
                     var currentActivity = GetActivity(definition);
 
-                    logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
+                    logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.GetType().Name}'...");
                     var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Compensate(context);
-                    logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
+                    logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.GetType().Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }

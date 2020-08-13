@@ -59,27 +59,27 @@ namespace Orleans.Sagas.Tests
             );
         }
 
-        private class TestActivity : Activity
+        private class TestActivity : IActivity
         {
-            public override Task Compensate(IActivityContext context)
+            public Task Compensate(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute(IActivityContext context)
+            public Task Execute(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
         }
 
-        private class TestConfigurableActivity : Activity<int>
+        private class TestConfigurableActivity : IActivity
         {
-            public override Task Compensate(IActivityContext context)
+            public Task Compensate(IActivityContext context)
             {
                 throw new NotImplementedException();
             }
 
-            public override Task Execute(IActivityContext context)
+            public Task Execute(IActivityContext context)
             {
                 throw new NotImplementedException();
             }

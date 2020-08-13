@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BalanceModificationActivity : Activity
+    public class BalanceModificationActivity : IActivity
     {
-        public override async Task Execute(IActivityContext context)
+        public async Task Execute(IActivityContext context)
         {
             var account = context.SagaProperties.GetInt("Account");
             var amount = context.SagaProperties.GetInt("Amount");
@@ -15,7 +15,7 @@ namespace Orleans.Sagas.Samples.Activities
             await sourceAccount.ModifyBalance(context.SagaId, amount);
         }
 
-        public override async Task Compensate(IActivityContext context)
+        public async Task Compensate(IActivityContext context)
         {
             var account = context.SagaProperties.GetInt("Account");
 
