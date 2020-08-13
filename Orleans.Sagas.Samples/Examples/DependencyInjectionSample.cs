@@ -12,12 +12,14 @@ namespace Orleans.Sagas.Samples.Examples
 
         public override async Task Execute()
         {
-            await GrainFactory
+            var saga = await GrainFactory
                 .CreateSaga()
-                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://dotnet.github.io/orleans/" )
-                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://dot.net" )
-                .AddActivity<RequestActivity, RequestConfig>(x => x.Url = "https://yahoo.com")
+                .AddActivity<RequestActivity>(x => x.Add("Url", "https://dotnet.github.io/orleans/"))
+                .AddActivity<RequestActivity>(x => x.Add("Url", "https://dot.net"))
+                .AddActivity<RequestActivity>(x => x.Add("Url", "https://yahoo.com"))
                 .ExecuteSagaAsync();
+
+            await saga.Wait();
         }
     }
 }

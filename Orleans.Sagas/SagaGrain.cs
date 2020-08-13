@@ -46,12 +46,14 @@ namespace Orleans.Sagas
             }
         }
 
-        public async Task Execute(IEnumerable<ActivityDefinition> activities)
+        public async Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties)
         {
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
-                State.Properties = new Dictionary<string, object>();
+                State.Properties = sagaProperties is null
+                    ? new Dictionary<string, object>()
+                    : ((SagaPropertyBag)sagaProperties).ContextProperties;
                 State.Status = SagaStatus.Executing;
                 await WriteStateAsync();
                 await RegisterReminderAsync();
@@ -152,33 +154,20 @@ namespace Orleans.Sagas
 
         private IActivity GetActivity(ActivityDefinition definition)
         {
-            var activity = (IActivity)serviceProvider.GetService(definition.Type);
-
-            var hasConfig = definition.GetType().GetProperties().Any(x => x.Name == nameof(Activity<object>.Config));
-
-            if (!hasConfig)
-            {
-                return activity;
-            }
-
-            var prop = activity.GetType().GetProperty(nameof(Activity<object>.Config));
-            var value = definition.GetType().GetProperty(nameof(ActivityDefinition<object>.Config)).GetValue(definition);
-
-            prop.SetValue(activity, value);
-
-            return activity;
+            return (IActivity)serviceProvider.GetService(definition.Type);
         }
 
         private async Task ResumeExecuting()
         {
             while (State.NumCompletedActivities < State.Activities.Count)
             {
-                var currentActivity = GetActivity(State.Activities[State.NumCompletedActivities]);
+                var definition = State.Activities[State.NumCompletedActivities];
+                var currentActivity = GetActivity(definition);
 
                 try
                 {
                     logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.Name}'...");
-                    var context = CreateActivityRuntimeContext();
+                    var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Execute(context);
                     logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.Name}' complete.");
                     State.NumCompletedActivities++;
@@ -207,10 +196,11 @@ namespace Orleans.Sagas
             {
                 try
                 {
-                    var currentActivity = GetActivity(State.Activities[State.CompensationIndex]);
+                    var definition = State.Activities[State.CompensationIndex];
+                    var currentActivity = GetActivity(definition);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.Name}'...");
-                    var context = CreateActivityRuntimeContext();
+                    var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Compensate(context);
                     logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.Name}' compensation complete.");
                     State.CompensationIndex--;
@@ -241,13 +231,21 @@ namespace Orleans.Sagas
             
         }
 
-        private ActivityContext CreateActivityRuntimeContext()
+        private ActivityContext CreateActivityRuntimeContext(ActivityDefinition definition)
         {
+            var propertyBag = (SagaPropertyBag)definition.Properties;
+            IEnumerable<KeyValuePair<string, object>> properties = State.Properties;
+
+            if (propertyBag != null)
+            {
+                properties = properties.Concat(propertyBag.ContextProperties);
+            }
+
             return new ActivityContext(
                 this.GetPrimaryKey(),
                 GrainFactory,
                 grainContext,
-                State.Properties.ToDictionary(x => x.Key, y => y.Value)
+                properties.ToDictionary(x => x.Key, y => y.Value)
             );
         }
 

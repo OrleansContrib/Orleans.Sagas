@@ -2,31 +2,15 @@
 
 namespace Orleans.Sagas
 {
-    public class ActivityDefinition<TConfig> : ActivityDefinition
-    {
-        public TConfig Config { get; }
-
-        public ActivityDefinition() : base()
-        {
-        }
-
-        public ActivityDefinition(Type type, TConfig config) : base(type)
-        {
-            Config = config;
-        }
-    }
-
     public class ActivityDefinition
     {
         public Type Type { get; }
+        public ISagaPropertyBag Properties { get; }
 
-        public ActivityDefinition()
-        {
-        }
-
-        public ActivityDefinition(Type type)
+        public ActivityDefinition(Type type, ISagaPropertyBag properties)
         {
             Type = type;
+            Properties = properties;
         }
     }
 }

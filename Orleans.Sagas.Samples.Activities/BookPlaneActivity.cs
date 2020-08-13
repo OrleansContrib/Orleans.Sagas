@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookPlaneActivity : Activity<BookPlaneConfig>
+    public class BookPlaneActivity : Activity
     {
         public override Task Execute(IActivityContext context)
         {

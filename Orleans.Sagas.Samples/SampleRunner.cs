@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Orleans.Sagas.Samples.Examples;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,13 +9,15 @@ namespace Orleans.Sagas.Samples
     class SampleRunner : IHostedService
     {
         private readonly Sample[] samples;
+        private readonly ILogger<SampleRunner> logger;
 
         public SampleRunner(
             DependencyInjectionSample dependencyInjectionSample,
             BankTransferSample bankTransferSample,
             ConcurrencySample concurrencySample,
             DukeSample dukeSample,
-            TravelSample travelSample)
+            TravelSample travelSample,
+            ILogger<SampleRunner> logger)
         {
             samples = new Sample[]
             {
@@ -24,12 +27,15 @@ namespace Orleans.Sagas.Samples
                 dukeSample,
                 travelSample
             };
+
+            this.logger = logger;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             foreach (var sample in samples)
             {
+                logger.LogDebug($"Running sample '{sample.GetType().Name}'...");
                 await sample.Execute();
             }
         }

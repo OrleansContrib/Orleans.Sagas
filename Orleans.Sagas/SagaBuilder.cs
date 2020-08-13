@@ -24,26 +24,29 @@ namespace Orleans.Sagas
 
         public ISagaBuilder AddActivity<TActivity>() where TActivity : IActivity
         {
-            activities.Add(new ActivityDefinition(typeof(TActivity)));
-            return this;
+            return AddActivity<TActivity>(default(ISagaPropertyBag));
         }
 
-        public ISagaBuilder AddActivity<TActivity, TConfig>(TConfig config) where TActivity : IActivity<TConfig>
+        public ISagaBuilder AddActivity<TActivity>(ISagaPropertyBag properties) where TActivity : IActivity
         {
             // todo: serialize dynamic activity config safely.
-            activities.Add(new ActivityDefinition<TConfig>(typeof(TActivity), config));
+            activities.Add(new ActivityDefinition(typeof(TActivity), properties));
             return this;
         }
 
-        public ISagaBuilder AddActivity<TActivity, TConfig>(Action<TConfig> configDelegate) where TActivity : IActivity<TConfig>
+        public ISagaBuilder AddActivity<TActivity>(Action<ISagaPropertyBag> propertiesDelegate) where TActivity : IActivity
         {
-            var config = Activator.CreateInstance<TConfig>();
-            configDelegate.Invoke(config);
-            AddActivity<TActivity, TConfig>(config);
-            return this;
+            var properties = Activator.CreateInstance<SagaPropertyBag>();
+            propertiesDelegate.Invoke(properties);
+            return AddActivity<TActivity>(properties);
         }
 
         public async Task<ISagaGrain> ExecuteSagaAsync()
+        {
+            return await ExecuteSagaAsync(null);
+        }
+
+        public async Task<ISagaGrain> ExecuteSagaAsync(Action<ISagaPropertyBag> propertiesDelegate)
         {
             if (activities.Count == 0)
             {
@@ -52,7 +55,15 @@ namespace Orleans.Sagas
 
             var sagaGrain = grainFactory.GetGrain<ISagaGrain>(Id);
 
-            await sagaGrain.Execute(activities);
+            SagaPropertyBag properties = null;
+            
+            if (propertiesDelegate != null)
+            {
+                properties = Activator.CreateInstance<SagaPropertyBag>();
+                propertiesDelegate.Invoke(properties);
+            }
+
+            await sagaGrain.Execute(activities, properties);
 
             return sagaGrain;
         }

@@ -2,7 +2,7 @@
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookHotelActivity : Activity<BookHotelConfig>
+    public class BookHotelActivity : Activity
     {
         public override Task Compensate(IActivityContext context)
         {

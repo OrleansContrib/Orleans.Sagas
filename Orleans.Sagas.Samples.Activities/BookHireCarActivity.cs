@@ -2,7 +2,7 @@
 
 namespace Orleans.Sagas.Samples.Activities
 {
-    public class BookHireCarActivity : Activity<BookHireCarConfig>
+    public class BookHireCarActivity : Activity
     {
         public override Task Compensate(IActivityContext context)
         {
@@ -11,6 +11,8 @@ namespace Orleans.Sagas.Samples.Activities
 
         public override Task Execute(IActivityContext context)
         {
+            var hireCarModel = context.SagaProperties.GetInt("HireCarModel");
+
             context.SagaProperties.Add("NumSuitcases", 3);
 
             return Task.CompletedTask;
