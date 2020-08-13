@@ -37,13 +37,13 @@ public class BookHireCarActivity : IActivity
     public async Task Execute(IActivityContext context)
     {
         // idempotently request a hire car from a hire car service.
-        await HireCarService.Book(context.SagaProperties.GetInt("HireCarModel"));
+        await HireCarService.Book(context.SagaId, context.SagaProperties.GetInt("HireCarModel"));
     }
 
     public async Task Compensate(IActivityContext context)
     {
         // idempotently cancel a hire car request from a hire car service.
-        await HireCarService.Cancel(Config.HireCarRequestGuid);
+        await HireCarService.Cancel(context.SagaId);
     }
 }
 ```
