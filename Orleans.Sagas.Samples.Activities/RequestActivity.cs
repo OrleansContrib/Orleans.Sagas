@@ -17,7 +17,7 @@ namespace Orleans.Sagas.Samples.Activities
 
         public async Task Execute(IActivityContext context)
         {
-            var url = context.SagaProperties.GetString("Url");
+            var url = context.SagaProperties.Get<string>("Url");
             var response = await httpClient.GetAsync(url);
             logger.LogInformation($"Retrieved {response.Content.Headers.ContentLength} bytes from '{url}'.");
         }

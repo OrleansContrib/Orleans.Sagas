@@ -1,72 +1,43 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Orleans.Sagas
 {
     class SagaPropertyBag : ISagaPropertyBag
     {
-        private readonly Dictionary<string, object> existingProperties;
+        private readonly Dictionary<string, string> existingProperties;
 
-        public Dictionary<string, object> ContextProperties { get; }
+        public Dictionary<string, string> ContextProperties { get; }
 
-        public SagaPropertyBag() : this(new Dictionary<string, object>())
+        public SagaPropertyBag() : this(new Dictionary<string, string>())
         {
         }
 
-        public SagaPropertyBag(Dictionary<string, object> existingProperties)
+        public SagaPropertyBag(Dictionary<string, string> existingProperties)
         {
             this.existingProperties = existingProperties;
-            ContextProperties = new Dictionary<string, object>();
+            ContextProperties = new Dictionary<string, string>();
         }
 
-        public void Add(string key, string value)
+        public void Add<T>(string key, T value)
         {
-            ContextProperties.Add(key, value);
+            if (typeof(T) == typeof(string))
+            {
+                ContextProperties.Add(key, (string)(dynamic)value);
+                return;
+            }
+
+            ContextProperties.Add(key, JsonConvert.SerializeObject(value));
         }
 
-        public void Add(string key, Guid value)
+        public T Get<T>(string key)
         {
-            ContextProperties.Add(key, value);
-        }
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(dynamic)existingProperties[key];
+            }
 
-        public void Add(string key, int value)
-        {
-            ContextProperties.Add(key, value);
-        }
-
-        public void Add(string key, long value)
-        {
-            ContextProperties.Add(key, value);
-        }
-
-        public void Add(string key, bool value)
-        {
-            ContextProperties.Add(key, value);
-        }
-
-        public bool GetBool(string key)
-        {
-            return (bool)existingProperties[key];
-        }
-
-        public Guid GetGuid(string key)
-        {
-            return (Guid)existingProperties[key];
-        }
-
-        public int GetInt(string key)
-        {
-            return (int)existingProperties[key];
-        }
-
-        public long GetLong(string key)
-        {
-            return (long)existingProperties[key];
-        }
-
-        public string GetString(string key)
-        {
-            return (string)existingProperties[key];
+            return JsonConvert.DeserializeObject<T>(existingProperties[key]);
         }
     }
 }

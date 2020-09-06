@@ -21,11 +21,11 @@ namespace Orleans.Sagas.Samples
         {
             samples = new Sample[]
             {
+                travelSample,
                 dependencyInjectionSample,
                 bankTransferSample,
                 concurrencySample,
-                dukeSample,
-                travelSample
+                dukeSample
             };
 
             this.logger = logger;
