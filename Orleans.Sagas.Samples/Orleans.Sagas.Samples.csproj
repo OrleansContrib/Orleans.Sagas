@@ -18,6 +18,9 @@
     <PackageReference Include="Microsoft.Orleans.Core" Version="3.2.0" />
     <PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.2.0" />
     <PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.Reminders.AdoNet" Version="3.2.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
   <ItemGroup>
