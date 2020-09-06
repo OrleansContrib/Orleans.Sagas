@@ -11,7 +11,7 @@ namespace Orleans.Sagas
         public IGrainActivationContext GrainContext { get; }
         public ISagaPropertyBag SagaProperties { get; }
 
-        public ActivityContext(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext, Dictionary<string, object> existingProperties)
+        public ActivityContext(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext, Dictionary<string, string> existingProperties)
         {
             SagaId = sagaId;
             GrainFactory = grainFactory;

@@ -7,8 +7,8 @@ namespace Orleans.Sagas.Samples.Activities
     {
         public async Task Execute(IActivityContext context)
         {
-            var account = context.SagaProperties.GetInt("Account");
-            var amount = context.SagaProperties.GetInt("Amount");
+            var account = context.SagaProperties.Get<int>("Account");
+            var amount = context.SagaProperties.Get<int>("Amount");
 
             var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(account);
 
@@ -17,7 +17,7 @@ namespace Orleans.Sagas.Samples.Activities
 
         public async Task Compensate(IActivityContext context)
         {
-            var account = context.SagaProperties.GetInt("Account");
+            var account = context.SagaProperties.Get<int>("Account");
 
             var sourceAccount = context.GrainFactory.GetGrain<IBankAccountGrain>(account);
 

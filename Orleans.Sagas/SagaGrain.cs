@@ -52,7 +52,7 @@ namespace Orleans.Sagas
             {
                 State.Activities = activities.ToList();
                 State.Properties = sagaProperties is null
-                    ? new Dictionary<string, object>()
+                    ? new Dictionary<string, string>()
                     : ((SagaPropertyBag)sagaProperties).ContextProperties;
                 State.Status = SagaStatus.Executing;
                 await WriteStateAsync();
@@ -234,7 +234,7 @@ namespace Orleans.Sagas
         private ActivityContext CreateActivityRuntimeContext(ActivityDefinition definition)
         {
             var propertyBag = (SagaPropertyBag)definition.Properties;
-            IEnumerable<KeyValuePair<string, object>> properties = State.Properties;
+            IEnumerable<KeyValuePair<string, string>> properties = State.Properties;
 
             if (propertyBag != null)
             {

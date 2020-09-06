@@ -10,6 +10,6 @@ namespace Orleans.Sagas
         public SagaStatus Status { get; set; }
         public int CompensationIndex { get; set; }
         public bool HasBeenAborted { get; set; }
-        public Dictionary<string, object> Properties { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace Orleans.Sagas.Samples.Activities
     {
         public Task Execute(IActivityContext context)
         {
-            var kickAssCount = context.SagaProperties.GetInt("KickAssCount");
+            var kickAssCount = context.SagaProperties.Get<int>("KickAssCount");
             return Task.CompletedTask;
         }
 

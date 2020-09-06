@@ -7,7 +7,7 @@ namespace Orleans.Sagas.Samples.Activities
     {
         public Task Execute(IActivityContext context)
         {
-            var numSuitcases = context.SagaProperties.GetInt("NumSuitcases");
+            var numSuitcases = context.SagaProperties.Get<int>("NumSuitcases");
 
             // comment in to test compensation.
             //throw new SeatUnavailableException();

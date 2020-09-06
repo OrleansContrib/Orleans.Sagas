@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Orleans.Sagas.Samples.Activities.Data;
+using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
@@ -11,6 +12,8 @@ namespace Orleans.Sagas.Samples.Activities
 
         public Task Execute(IActivityContext context)
         {
+            var carInfo = context.SagaProperties.Get<CarInfo>(nameof(CarInfo));
+
             return Task.CompletedTask;
         }
     }
