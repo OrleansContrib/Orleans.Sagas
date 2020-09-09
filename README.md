@@ -67,7 +67,7 @@ sagaBuilder
     .AddActivity<BookPlaneActivity>()
 
 // execute the saga (idempotent).
-var saga = await sagaBuilder.ExecuteSaga(x => x.Add("HireCarModel", 1));
+var saga = await sagaBuilder.ExecuteSagaAsync(x => x.Add("HireCarModel", 1));
 
 // abort the saga (idempotent).
 await saga.RequestAbort();
