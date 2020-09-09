@@ -13,12 +13,12 @@ If you are familiar with Orleans you can use Orleans.Sagas to orchestrate long r
 # Status
 The library is currently in user acceptance testing with its first major consumer and is therefore **not recommended for production use** yet and will likely require subsequent API changes prior to a supported release.
 
+The [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) is available as a preview, and in the absence of detailed documentation, the [gitter chat](https://gitter.im/OrleansContrib/Orleans.Sagas) is a good place to start.
+
 # References
 - Garcia-Molina, H. - *[Sagas](http://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)* (1987)
 - Eldeeb, T. and Bernstein, P. - *[Transactions for Distributed Actors in the Cloud](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/10/EldeebBernstein-TransactionalActors-MSR-TR-1.pdf)* (2016)
 - McCaffrey, C. - *[Applying the Saga Pattern](https://www.youtube.com/watch?v=xDuwrtwYHu8)* (2015)
-
-The [NuGet package](https://www.nuget.org/packages/Orleans.Sagas) is available as a preview, and in the absence of detailed documentation, the [gitter chat](https://gitter.im/OrleansContrib/Orleans.Sagas) is a good place to start.
 
 # Usage
 
