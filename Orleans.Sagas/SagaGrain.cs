@@ -170,7 +170,6 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
-                    // todo: handle failure here.
                     await WriteStateAsync();
                     return;
                 }
@@ -182,7 +181,6 @@ namespace Orleans.Sagas
             }
 
             State.Status = SagaStatus.Executed;
-            // todo: handle failure here.
             await WriteStateAsync();
         }
 
@@ -231,7 +229,6 @@ namespace Orleans.Sagas
             State.Status = State.HasBeenAborted
                 ? SagaStatus.Aborted
                 : SagaStatus.Compensated;
-            // todo: handle failure here.
             await WriteStateAsync();
         }
 
