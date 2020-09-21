@@ -12,6 +12,7 @@ namespace Orleans.Sagas.Samples
         private readonly ILogger<SampleRunner> logger;
 
         public SampleRunner(
+            AbortSample abortSample,
             DependencyInjectionSample dependencyInjectionSample,
             BankTransferSample bankTransferSample,
             ConcurrencySample concurrencySample,
@@ -21,11 +22,12 @@ namespace Orleans.Sagas.Samples
         {
             samples = new Sample[]
             {
+                abortSample/*,
                 travelSample,
                 dependencyInjectionSample,
                 bankTransferSample,
                 concurrencySample,
-                dukeSample
+                dukeSample*/
             };
 
             this.logger = logger;

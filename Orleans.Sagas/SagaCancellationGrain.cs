@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Orleans.Placement;
+using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
+    [PreferLocalPlacement]
     public class SagaCancellationGrain : Grain<SagaCancellationGrainState>, ISagaCancellationGrain
     {
         public async Task RequestAbort()

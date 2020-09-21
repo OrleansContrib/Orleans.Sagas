@@ -44,13 +44,14 @@ namespace Orleans.Sagas.Samples
                         {
                             services.AddSingleton<HttpClient>();
 
+                            services.AddTransient<AbortSample>();
                             services.AddTransient<DependencyInjectionSample>();
                             services.AddTransient<BankTransferSample>();
                             services.AddTransient<DukeSample>();
                             services.AddTransient<TravelSample>();
                             services.AddTransient<ConcurrencySample>();
                             
-                            //services.AddHostedService<SampleRunner>();
+                            services.AddHostedService<SampleRunner>();
                         })
                         .AddAdoNetGrainStorageAsDefault(opts =>
                         {
