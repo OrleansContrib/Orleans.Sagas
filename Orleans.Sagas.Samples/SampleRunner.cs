@@ -22,12 +22,12 @@ namespace Orleans.Sagas.Samples
         {
             samples = new Sample[]
             {
-                abortSample/*,
+                abortSample,
                 travelSample,
                 dependencyInjectionSample,
                 bankTransferSample,
                 concurrencySample,
-                dukeSample*/
+                dukeSample
             };
 
             this.logger = logger;
