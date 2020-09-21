@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Orleans.Placement;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
+    [PreferLocalPlacement]
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private static readonly string ReminderName = nameof(SagaGrain);
@@ -27,23 +29,10 @@ namespace Orleans.Sagas
         {
             logger.Warn(0, $"Saga {this} received an abort request.");
 
-            if (State.Status == SagaStatus.Aborted)
-            {
-                return;
-            }
-
-            State.HasBeenAborted = true;
-            State.Status = State.Status == SagaStatus.NotStarted
-                ? SagaStatus.Aborted
-                : SagaStatus.Compensating;
-            
             // register abort request in separate grain in-case storage is mutating.
             await GetSagaCancellationGrain().RequestAbort();
 
-            if (State.Status == SagaStatus.Compensating)
-            {
-                await ResumeAsync();
-            }
+            await ResumeAsync();
         }
 
         public async Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties)
@@ -109,11 +98,8 @@ namespace Orleans.Sagas
         private async Task ResumeNoWaitAsync()
         {
             isActive = true;
-            
-            if (await GetSagaCancellationGrain().HasAbortBeenRequested())
-            {
-                await RequestAbort();
-            }
+
+            await CheckForAbortAsync();
 
             while (State.Status == SagaStatus.Executing ||
                    State.Status == SagaStatus.Compensating)
@@ -161,6 +147,11 @@ namespace Orleans.Sagas
         {
             while (State.NumCompletedActivities < State.Activities.Count)
             {
+                if (await CheckForAbortAsync())
+                {
+                    return;
+                }
+
                 var definition = State.Activities[State.NumCompletedActivities];
                 var currentActivity = GetActivity(definition);
 
@@ -179,15 +170,36 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
-                    // todo: handle failure here.
                     await WriteStateAsync();
                     return;
                 }
             }
 
+            if (await CheckForAbortAsync())
+            {
+                return;
+            }
+
             State.Status = SagaStatus.Executed;
-            // todo: handle failure here.
             await WriteStateAsync();
+        }
+
+        private async Task<bool> CheckForAbortAsync()
+        {
+            if (await GetSagaCancellationGrain().HasAbortBeenRequested())
+            {
+                if (!State.HasBeenAborted)
+                {
+                    State.HasBeenAborted = true;
+                    State.Status = SagaStatus.Compensating;
+                    State.CompensationIndex = State.NumCompletedActivities - 1;
+                    await WriteStateAsync();
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private async Task ResumeCompensating()
@@ -217,7 +229,6 @@ namespace Orleans.Sagas
             State.Status = State.HasBeenAborted
                 ? SagaStatus.Aborted
                 : SagaStatus.Compensated;
-            // todo: handle failure here.
             await WriteStateAsync();
         }
 
