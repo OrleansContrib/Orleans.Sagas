@@ -99,7 +99,10 @@ namespace Orleans.Sagas
         {
             isActive = true;
 
-            await CheckForAbortAsync();
+            if (State.NumCompletedActivities > 0)
+            {
+                await CheckForAbortAsync();
+            }
 
             while (State.Status == SagaStatus.Executing ||
                    State.Status == SagaStatus.Compensating)

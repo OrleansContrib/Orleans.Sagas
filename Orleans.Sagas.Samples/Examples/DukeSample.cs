@@ -13,17 +13,16 @@ namespace Orleans.Sagas.Samples.Examples
 
         public override async Task Execute()
         {
-            await new List<ISagaGrain>
-            {
-                await ExecuteNormally(),
-                await ExecuteAndAbort(),
-                await AbortWithoutExecution(),
-                await AbortThenExecute()
-            }.Wait();
+            await (await ExecuteNormally()).Wait();
+            await (await ExecuteAndAbort()).Wait();
+            await (await AbortWithoutExecution()).Wait();
+            await (await AbortThenExecute()).Wait();
         }
 
         private async Task<ISagaGrain> ExecuteNormally()
         {
+            Logger.LogWarning(nameof(ExecuteNormally));
+
             var sagaBuilder = GrainFactory.CreateSaga();
 
             AddActivities(sagaBuilder);
@@ -33,6 +32,8 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> ExecuteAndAbort()
         {
+            Logger.LogWarning(nameof(ExecuteAndAbort));
+
             var sagaBuilder = GrainFactory.CreateSaga();
 
             AddActivities(sagaBuilder);
@@ -46,6 +47,8 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> AbortWithoutExecution()
         {
+            Logger.LogWarning(nameof(AbortWithoutExecution));
+
             var sagaBuilder = GrainFactory.CreateSaga();
 
             var saga = GrainFactory.GetSaga(sagaBuilder.Id);
@@ -57,6 +60,8 @@ namespace Orleans.Sagas.Samples.Examples
 
         public async Task<ISagaGrain> AbortThenExecute()
         {
+            Logger.LogWarning(nameof(AbortThenExecute));
+
             var sagaBuilder = GrainFactory.CreateSaga();
 
             var saga = GrainFactory.GetSaga(sagaBuilder.Id);
