@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>0.0.29-pre</Version>
+    <Version>0.0.30-pre</Version>
     <Description>A distributed saga implementation for Orleans</Description>
   </PropertyGroup>
 
