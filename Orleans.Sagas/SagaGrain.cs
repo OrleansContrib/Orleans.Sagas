@@ -106,6 +106,7 @@ namespace Orleans.Sagas
             try
             {
                 await UnregisterReminder(grainReminder);
+                grainReminder = null;
             }
             catch (Exception ex)
             {
@@ -150,7 +151,7 @@ namespace Orleans.Sagas
                         break;
                 }
 
-                await UnregisterReminder(grainReminder);
+                await UnRegisterReminderAsync();
             }
             finally
             {
