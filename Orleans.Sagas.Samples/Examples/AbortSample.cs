@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Orleans.Sagas.Samples.Activities;
+using System;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Examples
@@ -12,38 +13,43 @@ namespace Orleans.Sagas.Samples.Examples
 
         public override async Task Execute()
         {
-            // restart...
-            // before first activity starts
-            // before second activity starts
-            
-            Describe("before start");
+            Describe("Abort before execute");
+            Guid id = Guid.NewGuid();
+            var sagaBuilder = CreateSaga(id);
+            var saga = GrainFactory.GetSaga(id);
+            await saga.RequestAbort();
+            await sagaBuilder.ExecuteSagaAsync();
+            await saga.Wait();
+            await ValidateSagaAbortedSuccessfullyAsync(saga);
+
+            Describe("Abort before start");
             var saga1 = await CreateAndExecuteSagaAsync();
             await saga1.RequestAbort();
             await saga1.Wait();
             await ValidateSagaAbortedSuccessfullyAsync(saga1);
 
-            Describe("before first activity ends");
+            Describe("Abort before first activity ends");
             var saga2 = await CreateAndExecuteSagaAsync();
             await Task.Delay(1000);
             await saga2.RequestAbort();
             await saga2.Wait();
             await ValidateSagaAbortedSuccessfullyAsync(saga2);
 
-            Describe("before second activity ends");
+            Describe("Abort before second activity ends");
             var saga3 = await CreateAndExecuteSagaAsync();
             await Task.Delay(4000);
             await saga3.RequestAbort();
             await saga3.Wait();
             await ValidateSagaAbortedSuccessfullyAsync(saga3);
-            
-            Describe("after last activity ends / sagas has executed");
+
+            Describe("Abort after last activity ends / sagas has executed");
             var saga4 = await CreateAndExecuteSagaAsync();
             await Task.Delay(8000);
             await saga4.RequestAbort();
             await saga4.Wait();
             await ValidateSagaAbortedSuccessfullyAsync(saga4);
 
-            Describe("after abort completed");
+            Describe("Abort after abort completed");
             await saga4.RequestAbort();
             await ValidateSagaAbortedSuccessfullyAsync(saga4);
         }
@@ -62,9 +68,18 @@ namespace Orleans.Sagas.Samples.Examples
                 .ExecuteSagaAsync();
         }
 
+        private ISagaBuilder CreateSaga(Guid id)
+        {
+            return GrainFactory
+                .CreateSaga(id)
+                .AddActivity<WaitActivity>(x => x.Add("WaitTimeSeconds", 2))
+                .AddActivity<WaitActivity>(x => x.Add("WaitTimeSeconds", 4));
+        }
+
         private async Task ValidateSagaAbortedSuccessfullyAsync(ISagaGrain saga)
         {
-            Logger.LogInformation($"Saga end status is {await saga.GetStatus()}");
+            var status = await saga.GetStatus();
+            Logger.LogInformation($"Saga end status is {status}");
         }
     }
 }
