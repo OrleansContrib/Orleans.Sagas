@@ -60,6 +60,16 @@ public class BookHireCarActivity : IActivity
 }
 ```
 
+## Native dependency injection
+```csharp
+public class BookHireCarActivity : IActivity
+{
+    public BookHireCarActivity(IWasAddedAsAServiceOnStartUp myDependency)
+    {
+    }
+}
+```
+
 ## Executing a saga
 ```csharp
 // create a saga builder.
