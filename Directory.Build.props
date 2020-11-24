@@ -6,7 +6,6 @@
 
   <PropertyGroup>
     <DefaultTargetFrameworkVersion>netcoreapp2.1</DefaultTargetFrameworkVersion>
-    <OrleansSagasVersion>0.0.32-pre</OrleansSagasVersion>
     <OrleansVersion>3.3.0</OrleansVersion>
   </PropertyGroup>
 

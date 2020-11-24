@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(DefaultTargetFrameworkVersion)</TargetFramework>
-    <Version>$(OrleansSagasVersion)</Version>
+    <Version>0.0.32-pre</Version>
     <Description>A distributed saga implementation for Orleans</Description>
   </PropertyGroup>
 
