@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>$(DefaultTargetFrameworkVersion)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Orleans.Core" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="$(OrleansVersion)" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="$(OrleansVersion)" />
   </ItemGroup>
 
   <ItemGroup>
