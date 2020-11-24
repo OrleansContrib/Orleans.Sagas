@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>0.0.31-pre</Version>
+    <TargetFramework>$(DefaultTargetFrameworkVersion)</TargetFramework>
+    <Version>$(OrleansSagasVersion)</Version>
     <Description>A distributed saga implementation for Orleans</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Orleans.Core" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="$(OrleansVersion)" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="$(OrleansVersion)" />
+    <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="$(OrleansVersion)" />
   </ItemGroup>
 
 </Project>
