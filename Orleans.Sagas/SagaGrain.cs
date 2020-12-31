@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Orleans.Sagas
 {
-    [PreferLocalPlacement]
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private static readonly string ReminderName = nameof(SagaGrain);
