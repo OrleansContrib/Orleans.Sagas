@@ -18,6 +18,7 @@ namespace Orleans.Sagas.Samples
             ConcurrencySample concurrencySample,
             DukeSample dukeSample,
             TravelSample travelSample,
+            ErrorReportSample errorReportSample,
             ILogger<SampleRunner> logger)
         {
             samples = new Sample[]
@@ -27,7 +28,8 @@ namespace Orleans.Sagas.Samples
                 dependencyInjectionSample,
                 bankTransferSample,
                 concurrencySample,
-                dukeSample
+                dukeSample,
+                errorReportSample
             };
 
             this.logger = logger;

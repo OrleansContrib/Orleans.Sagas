@@ -50,22 +50,23 @@ namespace Orleans.Sagas.Samples
                             services.AddTransient<DukeSample>();
                             services.AddTransient<TravelSample>();
                             services.AddTransient<ConcurrencySample>();
-                            
+                            services.AddTransient<ErrorReportSample>();
+
                             services.AddHostedService<SampleRunner>();
                         })
-                        .AddAdoNetGrainStorageAsDefault(opts =>
-                        {
-                            opts.Invariant = "System.Data.SqlClient";
-                            opts.ConnectionString = "Server=.;Database=Orleans.Sagas;Integrated Security=true;";
-                            //opts.UseJsonFormat = true;
-                        })
+                       .AddAdoNetGrainStorageAsDefault(opts =>
+                       {
+                           opts.Invariant = "System.Data.SqlClient";
+                           opts.ConnectionString = "Server=.;Database=Orleans.Sagas;Integrated Security=true;";
+                           //opts.UseJsonFormat = true;
+                       })
                         .UseAdoNetReminderService(opts =>
                         {
                             opts.Invariant = "System.Data.SqlClient";
                             opts.ConnectionString = "Server=.;Database=Orleans.Sagas;Integrated Security=true;";
                         });
-                        //.AddMemoryGrainStorageAsDefault()
-                        //.UseInMemoryReminderService();
+                    //.AddMemoryGrainStorageAsDefault()
+                    //.UseInMemoryReminderService();
                 })
                 .RunConsoleAsync();
         }
