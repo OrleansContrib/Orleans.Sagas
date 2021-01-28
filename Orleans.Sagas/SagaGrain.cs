@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Orleans.Placement;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -40,6 +39,7 @@ namespace Orleans.Sagas
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
+                State.Errors = new Dictionary<Type, SagaError>();
                 State.Properties = sagaProperties is null
                     ? new Dictionary<string, string>()
                     : ((SagaPropertyBag)sagaProperties).ContextProperties;
@@ -55,6 +55,8 @@ namespace Orleans.Sagas
         {
             return Task.FromResult(State.Status);
         }
+
+        public async Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors() => await Task.FromResult(State.Errors);
 
         public Task<bool> HasCompleted()
         {
@@ -190,7 +192,9 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
+                    AddActivityError(definition, e);
                     await WriteStateAsync();
+
                     return;
                 }
 
@@ -232,9 +236,9 @@ namespace Orleans.Sagas
         {
             while (State.CompensationIndex >= 0)
             {
+                var definition = State.Activities[State.CompensationIndex];
                 try
                 {
-                    var definition = State.Activities[State.CompensationIndex];
                     var currentActivity = GetActivity(definition);
 
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.GetType().Name}'...");
@@ -244,8 +248,9 @@ namespace Orleans.Sagas
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    AddActivityError(definition, e);
                     await Task.Delay(5000);
                     // TODO: handle compensation failure with expoential backoff.
                     // TODO: maybe eventual accept failure in a CompensationFailed state?
@@ -265,7 +270,6 @@ namespace Orleans.Sagas
             {
                 State.Properties.Add(property.Key, property.Value);
             }
-
         }
 
         private ActivityContext CreateActivityRuntimeContext(ActivityDefinition definition)
@@ -289,6 +293,11 @@ namespace Orleans.Sagas
         private void ResumeCompleted()
         {
             logger.Info($"Saga {this} has completed with status '{State.Status}'.");
+        }
+
+        private void AddActivityError(ActivityDefinition activityDefinition, Exception exception)
+        {
+            State.Errors[activityDefinition.Type] = new SagaError(exception);
         }
     }
 }
