@@ -23,11 +23,11 @@ namespace Orleans.Sagas
         {
             if (typeof(T) == typeof(string))
             {
-                ContextProperties.Add(key, (string)(dynamic)value);
+                ContextProperties[key] = (string)(dynamic)value;
                 return;
             }
 
-            ContextProperties.Add(key, JsonConvert.SerializeObject(value));
+            ContextProperties[key] = JsonConvert.SerializeObject(value);
         }
 
         public T Get<T>(string key)
