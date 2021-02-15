@@ -3,6 +3,8 @@ name: .NET Core
 on:
   push:
     branches: [ master ]
+  pull_request:	
+    branches: [ master ]
 
 jobs:
   build:
@@ -26,3 +28,4 @@ jobs:
       with:
         PROJECT_FILE_PATH: "Orleans.Sagas/Orleans.Sagas.csproj"
         NUGET_KEY: ${{secrets.NUGET_KEY}}
+      if: github.event_name != 'pull_request'
