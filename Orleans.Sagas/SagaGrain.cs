@@ -24,6 +24,33 @@ namespace Orleans.Sagas
             this.logger = logger;
         }
 
+        protected override async Task ReadStateAsync()
+        {
+            try
+            {
+                await base.ReadStateAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(1, ex, "Failed to read state");
+                await HandleReadingStateError();
+            }
+        }
+
+        private async Task HandleReadingStateError()
+        {
+            try
+            {
+                await UnRegisterReminderAsync();
+                isActive = false;
+                await ClearStateAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(1, ex, "Failed to handle reading state error");
+            }
+        }
+
         public async Task RequestAbort()
         {
             logger.Warn(0, $"Saga {this} received an abort request.");
@@ -39,7 +66,6 @@ namespace Orleans.Sagas
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
-                State.Errors = new Dictionary<Type, SagaError>();
                 State.Properties = sagaProperties is null
                     ? new Dictionary<string, string>()
                     : ((SagaPropertyBag)sagaProperties).ContextProperties;
@@ -56,7 +82,7 @@ namespace Orleans.Sagas
             return Task.FromResult(State.Status);
         }
 
-        public async Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors() => await Task.FromResult(State.Errors);
+        public Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors() => throw new NotImplementedException();
 
         public Task<bool> HasCompleted()
         {
@@ -111,7 +137,7 @@ namespace Orleans.Sagas
             }
             catch (Exception ex)
             {
-                logger.LogError(1, "Failed to unregister the reminder", ex);
+                logger.LogError(1, ex, "Failed to unregister the reminder");
             }
         }
 
@@ -297,7 +323,7 @@ namespace Orleans.Sagas
 
         private void AddActivityError(ActivityDefinition activityDefinition, Exception exception)
         {
-            State.Errors[activityDefinition.Type] = new SagaError(exception);
+            // Must be backward compatiable way =
         }
     }
 }
