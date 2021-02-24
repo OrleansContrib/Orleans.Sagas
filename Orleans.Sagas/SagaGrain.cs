@@ -3,6 +3,7 @@ using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas
@@ -30,7 +31,7 @@ namespace Orleans.Sagas
             {
                 await base.ReadStateAsync();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is SerializationException || ex is InvalidCastException)
             {
                 logger.LogError(1, ex, "Failed to read state");
                 await HandleReadingStateError();
@@ -43,7 +44,6 @@ namespace Orleans.Sagas
             {
                 await UnRegisterReminderAsync();
                 isActive = false;
-                await ClearStateAsync();
             }
             catch (Exception ex)
             {
@@ -82,6 +82,7 @@ namespace Orleans.Sagas
             return Task.FromResult(State.Status);
         }
 
+        [Obsolete]
         public Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors() => throw new NotImplementedException();
 
         public Task<bool> HasCompleted()

@@ -30,6 +30,7 @@ namespace Orleans.Sagas
         /// Exposes activity errors.
         /// </summary>
         /// <returns>The execution errors grouped by activity type of this saga.</returns>
+        [Obsolete]
         Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors();
         
         /// <summary>
