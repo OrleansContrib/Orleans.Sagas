@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Orleans.Sagas
 {
@@ -16,7 +15,5 @@ namespace Orleans.Sagas
         public bool HasBeenAborted { get; set; }
 
         public Dictionary<string, string> Properties { get; set; }
-
-        public Dictionary<Type, SagaError> Errors { get; set; }
     }
 }
