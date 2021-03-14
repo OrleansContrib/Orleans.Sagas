@@ -16,8 +16,7 @@ namespace Orleans.Sagas.Samples.Examples
             var sagaWithFailingExecutionActivity = await GrainFactory.CreateSaga().AddActivity<FailingExecutionActivity>().ExecuteSagaAsync();
             await sagaWithFailingExecutionActivity.Wait();
 
-            // TODO currently the GetSagaErrors throws NotImplementedException
-            // await ValidateSagaErrorAsync(sagaWithFailingExecutionActivity);
+            await ValidateSagaErrorAsync(sagaWithFailingExecutionActivity);
         }
 
         private void Describe(string activityType)
@@ -27,18 +26,15 @@ namespace Orleans.Sagas.Samples.Examples
 
         private async Task ValidateSagaErrorAsync(ISagaGrain saga)
         {
-            var sagaErrors = await saga.GetSagaErrors();
+            var sagaError = await saga.GetSagaError();
 
-            foreach(var activityError in sagaErrors)
+            if(sagaError != null && sagaError.Exception is CustomException custom)
             {
-                if (activityError.Value == null)
-                {
-                    Logger.LogInformation($"Activity {activityError.Key} ran without errors");
-                    continue;
-                }
-
-                Logger.LogInformation($"Activity = {activityError.Key}, exception is {activityError.Value.Exception}");
+                Logger.LogInformation("Exception been thrown as expected", custom.CustomErrorCode);
+                return;
             }
+
+            Logger.LogError("Activity ran without throwing exceptions");
         }
     }
 }

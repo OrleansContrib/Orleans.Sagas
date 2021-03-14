@@ -23,12 +23,12 @@ namespace Orleans.Sagas.Samples
         {
             samples = new Sample[]
             {
-                abortSample,
-                travelSample,
-                dependencyInjectionSample,
-                bankTransferSample,
-                concurrencySample,
-                dukeSample,
+                //abortSample,
+                //travelSample,
+                //dependencyInjectionSample,
+                //bankTransferSample,
+                //concurrencySample,
+                //dukeSample,
                 errorReportSample
             };
 

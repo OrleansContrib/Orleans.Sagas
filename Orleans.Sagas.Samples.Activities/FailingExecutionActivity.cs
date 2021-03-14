@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Orleans.Sagas.Samples.Activities
 {
@@ -7,7 +6,7 @@ namespace Orleans.Sagas.Samples.Activities
     {
         public Task Execute(IActivityContext context)
         {
-            throw new Exception("Can not execute this activity");
+            throw new CustomException(1, "Could not execute this activity");
         }
 
         public Task Compensate(IActivityContext context)
