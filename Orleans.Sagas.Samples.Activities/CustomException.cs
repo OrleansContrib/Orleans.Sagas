@@ -5,6 +5,8 @@ namespace Orleans.Sagas.Samples.Activities
     [Serializable]
     public class CustomException : Exception
     {
+        public int CustomErrorCode { get; set; }
+
         public CustomException()
         {
         }
@@ -17,8 +19,5 @@ namespace Orleans.Sagas.Samples.Activities
         protected CustomException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext) : base(serializationInfo, streamingContext)
         {
         }
-
-        public int CustomErrorCode { get; set; }
-
     }
 }

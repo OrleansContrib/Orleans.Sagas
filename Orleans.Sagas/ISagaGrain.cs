@@ -26,9 +26,9 @@ namespace Orleans.Sagas
         Task<SagaStatus> GetStatus();
 
         /// <summary>
-        /// Exposes activity errors.
+        /// Exposes activity error.
         /// </summary>
-        /// <returns>The execution errors</returns>
+        /// <returns>The execution error</returns>
         Task<SagaError> GetSagaError();
         
         /// <summary>
