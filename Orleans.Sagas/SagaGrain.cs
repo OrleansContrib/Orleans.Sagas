@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Orleans.Sagas
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private static readonly string ReminderName = nameof(SagaGrain);
+        private static readonly string ActivityErrorPropertyKey = "ActivityErrorPropertyKey";
 
         private readonly IGrainActivationContext grainContext;
         private readonly IServiceProvider serviceProvider;
@@ -82,8 +84,17 @@ namespace Orleans.Sagas
             return Task.FromResult(State.Status);
         }
 
-        [Obsolete]
-        public Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors() => throw new NotImplementedException();
+        public async Task<SagaError> GetSagaError()
+        {
+            if (!State.Properties.ContainsKey(ActivityErrorPropertyKey))
+            {
+                await Task.CompletedTask;
+                return null;
+            }
+
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+            return JsonConvert.DeserializeObject<SagaError>(State.Properties[ActivityErrorPropertyKey], settings);
+        }
 
         public Task<bool> HasCompleted()
         {
@@ -219,7 +230,7 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
-                    AddActivityError(definition, e);
+                    AddActivityError(currentActivity, e);
                     await WriteStateAsync();
 
                     return;
@@ -264,10 +275,10 @@ namespace Orleans.Sagas
             while (State.CompensationIndex >= 0)
             {
                 var definition = State.Activities[State.CompensationIndex];
+                var currentActivity = GetActivity(definition);
+
                 try
                 {
-                    var currentActivity = GetActivity(definition);
-
                     logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.GetType().Name}'...");
                     var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Compensate(context);
@@ -275,9 +286,9 @@ namespace Orleans.Sagas
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    AddActivityError(definition, e);
+                    logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed while compensating with " + ex.GetType().Name, ex);
                     await Task.Delay(5000);
                     // TODO: handle compensation failure with expoential backoff.
                     // TODO: maybe eventual accept failure in a CompensationFailed state?
@@ -295,7 +306,7 @@ namespace Orleans.Sagas
             var propertyBag = (SagaPropertyBag)context.SagaProperties;
             foreach (var property in propertyBag.ContextProperties)
             {
-                State.Properties.Add(property.Key, property.Value);
+                State.Properties[property.Key] = property.Value;
             }
         }
 
@@ -322,9 +333,17 @@ namespace Orleans.Sagas
             logger.Info($"Saga {this} has completed with status '{State.Status}'.");
         }
 
-        private void AddActivityError(ActivityDefinition activityDefinition, Exception exception)
+        private void AddActivityError(IActivity currentActivity, Exception exception)
         {
-            // Must be backward compatiable way =
+            try
+            {
+                var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+                State.Properties[ActivityErrorPropertyKey] = JsonConvert.SerializeObject(new SagaError(currentActivity.GetType().Name, exception), settings);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to serialize failed exception.");
+            }
         }
     }
 }

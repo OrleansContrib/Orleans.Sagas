@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Orleans.Sagas
@@ -27,11 +26,10 @@ namespace Orleans.Sagas
         Task<SagaStatus> GetStatus();
 
         /// <summary>
-        /// Exposes activity errors.
+        /// Exposes activity error.
         /// </summary>
-        /// <returns>The execution errors grouped by activity type of this saga.</returns>
-        [Obsolete]
-        Task<IReadOnlyDictionary<Type, SagaError>> GetSagaErrors();
+        /// <returns>The execution error</returns>
+        Task<SagaError> GetSagaError();
         
         /// <summary>
         /// Exposes whether this saga has completed (either executed successfully, aborted successfully,
