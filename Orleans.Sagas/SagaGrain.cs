@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Orleans.Runtime;
 using System;
 using System.Collections.Generic;
@@ -12,13 +11,13 @@ namespace Orleans.Sagas
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private static readonly string ReminderName = nameof(SagaGrain);
-        private static readonly string ActivityErrorPropertyKey = "ActivityErrorPropertyKey";
 
         private readonly IGrainActivationContext grainContext;
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger<SagaGrain> logger;
         private bool isActive;
         private IGrainReminder grainReminder;
+        private IErrorTranslator _errorTranslator;
 
         public SagaGrain(IGrainActivationContext grainContext, IServiceProvider serviceProvider, ILogger<SagaGrain> logger)
         {
@@ -63,8 +62,10 @@ namespace Orleans.Sagas
             await ResumeAsync();
         }
 
-        public async Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties)
+        public async Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties, IErrorTranslator exceptionTranslator)
         {
+            _errorTranslator = exceptionTranslator ?? new DefaultErrorTranslator();
+            
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
@@ -84,16 +85,15 @@ namespace Orleans.Sagas
             return Task.FromResult(State.Status);
         }
 
-        public async Task<SagaError> GetSagaError()
+        public async Task<string> GetSagaError()
         {
-            if (!State.Properties.ContainsKey(ActivityErrorPropertyKey))
+            if (!State.Properties.ContainsKey(SagaPropertyBagKeys.ActivityErrorPropertyKey))
             {
                 await Task.CompletedTask;
                 return null;
             }
 
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-            return JsonConvert.DeserializeObject<SagaError>(State.Properties[ActivityErrorPropertyKey], settings);
+            return State.Properties[SagaPropertyBagKeys.ActivityErrorPropertyKey];
         }
 
         public Task<bool> HasCompleted()
@@ -230,7 +230,7 @@ namespace Orleans.Sagas
                     logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
-                    AddActivityError(currentActivity, e);
+                    AddActivityError(e);
                     await WriteStateAsync();
 
                     return;
@@ -333,16 +333,15 @@ namespace Orleans.Sagas
             logger.Info($"Saga {this} has completed with status '{State.Status}'.");
         }
 
-        private void AddActivityError(IActivity currentActivity, Exception exception)
+        private void AddActivityError(Exception exception)
         {
             try
             {
-                var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
-                State.Properties[ActivityErrorPropertyKey] = JsonConvert.SerializeObject(new SagaError(currentActivity.GetType().Name, exception), settings);
+                State.Properties[SagaPropertyBagKeys.ActivityErrorPropertyKey] = _errorTranslator?.Translate(exception);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to serialize failed exception.");
+                logger.LogError(ex, "Failed to tranlsate exception.");
             }
         }
     }

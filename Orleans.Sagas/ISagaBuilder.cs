@@ -26,6 +26,13 @@ namespace Orleans.Sagas
         ISagaBuilder AddActivity<TActivity>(Action<ISagaPropertyBag> propertiesDelegate) where TActivity : IActivity;
 
         /// <summary>
+        /// Adds an error translate, that will be used for translating the activity exception to a string.
+        /// </summary>
+        /// <param name="errorTranslator">The contract of the error translator.</param>
+        /// <returns>The ISagaBuilder.</returns>
+        ISagaBuilder AddErrorTranslator(IErrorTranslator errorTranslator);
+
+        /// <summary>
         /// Executes this saga and returns once the saga has been registered. Idempotent.
         /// </summary>
         /// <returns>A reference to the saga.</returns>

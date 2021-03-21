@@ -18,5 +18,15 @@ namespace Orleans.Sagas
             GrainContext = grainContext;
             SagaProperties = new SagaPropertyBag(existingProperties);
         }
+
+        public string GetSagaError()
+        {
+            if (!SagaProperties.ContainsKey(SagaPropertyBagKeys.ActivityErrorPropertyKey))
+            {
+                return null;
+            }
+
+            return SagaProperties.Get<string>(SagaPropertyBagKeys.ActivityErrorPropertyKey);
+        }
     }
 }

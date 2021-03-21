@@ -39,5 +39,10 @@ namespace Orleans.Sagas
 
             return JsonConvert.DeserializeObject<T>(existingProperties[key]);
         }
+
+        public bool ContainsKey(string key)
+        {
+            return existingProperties.ContainsKey(key);
+        }
     }
 }
