@@ -18,7 +18,7 @@ namespace Orleans.Sagas
         /// <param name="activities">The activities for this saga.</param>
         /// <param name="sagaProperties">The properties for this saga.</param>
         /// <returns></returns>
-        Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties);
+        Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties, IErrorTranslator exceptionTranslator);
         /// <summary>
         /// Exposes the status of this saga.
         /// </summary>
@@ -26,10 +26,10 @@ namespace Orleans.Sagas
         Task<SagaStatus> GetStatus();
 
         /// <summary>
-        /// Exposes activity error.
+        /// Exposes activity error, this method uses the error translator that you configured in the saga builder, if not it will return the exception message.
         /// </summary>
         /// <returns>The execution error</returns>
-        Task<SagaError> GetSagaError();
+        Task<string> GetSagaError();
         
         /// <summary>
         /// Exposes whether this saga has completed (either executed successfully, aborted successfully,

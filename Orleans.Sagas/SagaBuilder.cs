@@ -8,6 +8,7 @@ namespace Orleans.Sagas
     {
         private readonly List<ActivityDefinition> activities;
         private readonly IGrainFactory grainFactory;
+        private IErrorTranslator _errorTranslator;
 
         public Guid Id { get; private set; }
 
@@ -46,6 +47,12 @@ namespace Orleans.Sagas
             return await ExecuteSagaAsync(null);
         }
 
+        public ISagaBuilder AddErrorTranslator(IErrorTranslator errorTranslator)
+        {
+            _errorTranslator = errorTranslator;
+            return this;
+        }
+
         public async Task<ISagaGrain> ExecuteSagaAsync(Action<ISagaPropertyBag> propertiesDelegate)
         {
             if (activities.Count == 0)
@@ -63,7 +70,7 @@ namespace Orleans.Sagas
                 propertiesDelegate.Invoke(properties);
             }
 
-            await sagaGrain.Execute(activities, properties);
+            await sagaGrain.Execute(activities, properties, _errorTranslator);
 
             return sagaGrain;
         }
