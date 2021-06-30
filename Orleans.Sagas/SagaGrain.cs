@@ -65,7 +65,7 @@ namespace Orleans.Sagas
         public async Task Execute(IEnumerable<ActivityDefinition> activities, ISagaPropertyBag sagaProperties, IErrorTranslator exceptionTranslator)
         {
             _errorTranslator = exceptionTranslator ?? new DefaultErrorTranslator();
-            
+
             if (State.Status == SagaStatus.NotStarted)
             {
                 State.Activities = activities.ToList();
@@ -107,6 +107,8 @@ namespace Orleans.Sagas
 
         public async Task ReceiveReminder(string reminderName, TickStatus status)
         {
+            await TryToInitGrainReminderAsync();
+
             await ResumeAsync();
         }
 
@@ -137,9 +139,11 @@ namespace Orleans.Sagas
 
         private async Task UnRegisterReminderAsync()
         {
+            await TryToInitGrainReminderAsync();
+
             if (grainReminder == null)
             {
-                return;
+                return;                
             }
 
             try
@@ -343,6 +347,16 @@ namespace Orleans.Sagas
             {
                 logger.LogError(ex, "Failed to tranlsate exception.");
             }
+        }
+
+        private async Task TryToInitGrainReminderAsync()
+        {
+            if (grainReminder != null)
+            {
+                return;
+            }
+
+            grainReminder = await GetReminder(ReminderName);
         }
     }
 }
