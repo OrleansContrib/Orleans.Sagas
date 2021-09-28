@@ -2,12 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>$(DefaultTargetFrameworkVersion)</TargetFramework>
-    <Version>0.0.41-pre</Version>
+    <Version>0.0.42-pre</Version>
     <Description>A distributed saga implementation for Orleans</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="$(OrleansVersion)" />
+    <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="$(OrleansVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Orleans.Core" Version="$(OrleansVersion)" />
     <PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="$(OrleansVersion)" />
   </ItemGroup>

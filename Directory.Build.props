@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefaultTargetFrameworkVersion>netcoreapp2.1</DefaultTargetFrameworkVersion>
-    <OrleansVersion>3.3.0</OrleansVersion>
+    <DefaultTargetFrameworkVersion>net5.0</DefaultTargetFrameworkVersion>
+    <OrleansVersion>3.5.0</OrleansVersion>
   </PropertyGroup>
 
 </Project>
