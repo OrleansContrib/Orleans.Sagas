@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefaultTargetFrameworkVersion>net5.0</DefaultTargetFrameworkVersion>
-    <OrleansVersion>3.5.0</OrleansVersion>
+    <DefaultTargetFrameworkVersion>net7.0</DefaultTargetFrameworkVersion>
+    <OrleansVersion>7.0.0</OrleansVersion>
   </PropertyGroup>
 
 </Project>
