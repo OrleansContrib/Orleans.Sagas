@@ -32,11 +32,11 @@ namespace Orleans.Sagas.Samples.Examples
             var saga = await Transfer(from, to, amount);
             await saga.Wait();
 
-            Logger.Info("Account balances:");
+            Logger.LogInformation("Account balances:");
             for (int accountId = 1; accountId <= 2; accountId++)
             {
                 var account = GrainFactory.GetGrain<IBankAccountGrain>(accountId);
-                Logger.Info($"  #{accountId} : {await account.GetBalance()}");
+                Logger.LogInformation($"  #{accountId} : {await account.GetBalance()}");
             }
         }
 
