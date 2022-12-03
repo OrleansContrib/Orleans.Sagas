@@ -8,14 +8,15 @@ namespace Orleans.Sagas
     {
         public Guid SagaId { get; }
         public IGrainFactory GrainFactory { get; }
-        public IGrainActivationContext GrainContext { get; }
         public ISagaPropertyBag SagaProperties { get; }
-
-        public ActivityContext(Guid sagaId, IGrainFactory grainFactory, IGrainActivationContext grainContext, Dictionary<string, string> existingProperties)
+        private IGrainContextAccessor GrainContextAccessor { get; }
+        public IGrainContext GrainContext => GrainContextAccessor.GrainContext;
+        
+        public ActivityContext(Guid sagaId, IGrainFactory grainFactory, IGrainContextAccessor grainContextAccessor, Dictionary<string, string> existingProperties)
         {
             SagaId = sagaId;
             GrainFactory = grainFactory;
-            GrainContext = grainContext;
+            GrainContextAccessor = grainContextAccessor;
             SagaProperties = new SagaPropertyBag(existingProperties);
         }
 
