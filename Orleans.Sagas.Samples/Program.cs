@@ -35,11 +35,6 @@ namespace Orleans.Sagas.Samples
                         {
                             opts.AdvertisedIPAddress = IPAddress.Loopback;
                         })
-                        .ConfigureApplicationParts(parts =>
-                        {
-                            parts.AddSagaParts();
-                            parts.AddFrameworkPart(typeof(BankAccountGrain).Assembly).WithReferences();
-                        })
                         .ConfigureServices(services =>
                         {
                             services.AddSingleton<HttpClient>();

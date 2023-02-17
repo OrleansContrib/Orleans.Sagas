@@ -29,7 +29,7 @@ namespace Orleans.Sagas.Samples
                 bankTransferSample,
                 concurrencySample,
                 dukeSample,
-                errorReportSample
+                //errorReportSample
             };
 
             this.logger = logger;
