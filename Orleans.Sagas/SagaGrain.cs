@@ -11,16 +11,17 @@ namespace Orleans.Sagas
     public sealed class SagaGrain : Grain<SagaState>, ISagaGrain
     {
         private static readonly string ReminderName = nameof(SagaGrain);
-        private readonly IGrainContextAccessor grainContextAccessor;
+
+        private readonly IGrainActivationContext grainContext;
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger<SagaGrain> logger;
         private bool isActive;
         private IGrainReminder grainReminder;
         private IErrorTranslator _errorTranslator;
 
-        public SagaGrain(IGrainContextAccessor grainContextAccessor, IServiceProvider serviceProvider, ILogger<SagaGrain> logger)
+        public SagaGrain(IGrainActivationContext grainContext, IServiceProvider serviceProvider, ILogger<SagaGrain> logger)
         {
-            this.grainContextAccessor = grainContextAccessor;
+            this.grainContext = grainContext;
             this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
@@ -53,7 +54,7 @@ namespace Orleans.Sagas
 
         public async Task RequestAbort()
         {
-            logger.LogWarning(0, $"Saga {this} received an abort request.");
+            logger.Warn(0, $"Saga {this} received an abort request.");
 
             // register abort request in separate grain in-case storage is mutating.
             await GetSagaCancellationGrain().RequestAbort();
@@ -133,8 +134,7 @@ namespace Orleans.Sagas
         private async Task RegisterReminderAsync()
         {
             var reminderTime = TimeSpan.FromMinutes(1);
-            
-            grainReminder = await this.RegisterOrUpdateReminder(ReminderName, reminderTime, reminderTime);
+            grainReminder = await RegisterOrUpdateReminder(ReminderName, reminderTime, reminderTime);
         }
 
         private async Task UnRegisterReminderAsync()
@@ -148,7 +148,7 @@ namespace Orleans.Sagas
 
             try
             {
-                await this.UnregisterReminder(grainReminder);
+                await UnregisterReminder(grainReminder);
                 grainReminder = null;
             }
             catch (Exception ex)
@@ -204,7 +204,7 @@ namespace Orleans.Sagas
 
         private void ResumeNotStarted()
         {
-            logger.LogError(0, $"Saga {this} is attempting to resume but was never started.");
+            logger.Error(0, $"Saga {this} is attempting to resume but was never started.");
         }
 
         private IActivity GetActivity(ActivityDefinition definition)
@@ -221,17 +221,17 @@ namespace Orleans.Sagas
 
                 try
                 {
-                    logger.LogDebug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}'...");
+                    logger.Debug($"Executing activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}'...");
                     var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Execute(context);
-                    logger.LogDebug($"...activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}' complete.");
+                    logger.Debug($"...activity #{State.NumCompletedActivities} '{currentActivity.GetType().Name}' complete.");
                     State.NumCompletedActivities++;
                     AddPropertiesToState(context);
                     await WriteStateAsync();
                 }
                 catch (Exception e)
                 {
-                    logger.LogWarning(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
+                    logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed with " + e.GetType().Name);
                     State.CompensationIndex = State.NumCompletedActivities;
                     State.Status = SagaStatus.Compensating;
                     AddActivityError(e);
@@ -283,16 +283,16 @@ namespace Orleans.Sagas
 
                 try
                 {
-                    logger.LogDebug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.GetType().Name}'...");
+                    logger.Debug(0, $"Compensating for activity #{State.CompensationIndex} '{currentActivity.GetType().Name}'...");
                     var context = CreateActivityRuntimeContext(definition);
                     await currentActivity.Compensate(context);
-                    logger.LogDebug(0, $"...activity #{State.CompensationIndex} '{currentActivity.GetType().Name}' compensation complete.");
+                    logger.Debug(0, $"...activity #{State.CompensationIndex} '{currentActivity.GetType().Name}' compensation complete.");
                     State.CompensationIndex--;
                     await WriteStateAsync();
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed while compensating with " + ex.GetType().Name, ex);
+                    logger.Warn(0, "Activity '" + currentActivity.GetType().Name + "' in saga '" + GetType().Name + "' failed while compensating with " + ex.GetType().Name, ex);
                     await Task.Delay(5000);
                     // TODO: handle compensation failure with expoential backoff.
                     // TODO: maybe eventual accept failure in a CompensationFailed state?
@@ -327,14 +327,14 @@ namespace Orleans.Sagas
             return new ActivityContext(
                 this.GetPrimaryKey(),
                 GrainFactory,
-                grainContextAccessor,
+                grainContext,
                 properties.ToDictionary(x => x.Key, y => y.Value)
             );
         }
 
         private void ResumeCompleted()
         {
-            logger.LogInformation($"Saga {this} has completed with status '{State.Status}'.");
+            logger.Info($"Saga {this} has completed with status '{State.Status}'.");
         }
 
         private void AddActivityError(Exception exception)
@@ -356,7 +356,7 @@ namespace Orleans.Sagas
                 return;
             }
 
-            grainReminder = await this.GetReminder(ReminderName);
+            grainReminder = await GetReminder(ReminderName);
         }
     }
 }
