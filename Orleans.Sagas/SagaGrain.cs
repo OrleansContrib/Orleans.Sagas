@@ -270,7 +270,7 @@ namespace Orleans.Sagas
 
                 return true;
             }
-
+            
             return false;
         }
 
